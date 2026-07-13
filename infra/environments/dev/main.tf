@@ -26,3 +26,10 @@ module "s3" {
 
   environment = "dev"
 }
+
+module "iam" {
+  source = "../../modules/iam"
+
+  environment = "dev"
+  documents_bucket_arn = module.s3.documents_bucket_arn
+}
