@@ -32,4 +32,21 @@ module "iam" {
 
   environment = "dev"
   documents_bucket_arn = module.s3.documents_bucket_arn
+  db_secret_arn        = module.rds.db_secret_arn
+}
+
+module "rds" {
+  source = "../../modules/rds"
+
+  environment = "dev"
+  private_subnet_ids = module.network.private_subnet_ids
+  rds_security_group_id = module.network.rds_security_group_id
+}
+
+module "elasticache" {
+  source = "../../modules/elasticache"
+
+  environment = "dev"
+  private_subnet_ids = module.network.private_subnet_ids
+  redis_security_group_id = module.network.rds_security_group_id
 }
