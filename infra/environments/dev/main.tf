@@ -50,3 +50,9 @@ module "elasticache" {
   private_subnet_ids = module.network.private_subnet_ids
   redis_security_group_id = module.network.rds_security_group_id
 }
+
+module "cognito" {
+  source = "../../modules/cognito"
+
+  environment = "dev"
+}
