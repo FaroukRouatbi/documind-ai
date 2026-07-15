@@ -33,3 +33,11 @@ output "cognito_user_pool_id" {
 output "cognito_user_pool_client_id" {
   value = module.cognito.user_pool_client_id
 }
+
+output "api_repository_url" {
+  value = module.ecr.api_repository_url
+}
+
+output "worker_repository_url" {
+  value = module.ecr.worker_repository_url
+}

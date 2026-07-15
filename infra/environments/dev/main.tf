@@ -64,3 +64,9 @@ module "sqs" {
   environment = "dev"
 }
 
+module "ecr" {
+  source = "../../modules/ecr"
+
+  environment = "dev"
+}
+
