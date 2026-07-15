@@ -33,6 +33,7 @@ module "iam" {
   environment = "dev"
   documents_bucket_arn = module.s3.documents_bucket_arn
   db_secret_arn        = module.rds.db_secret_arn
+  sqs_queue_arn = module.sqs.queue_arn
 }
 
 module "rds" {
@@ -56,3 +57,10 @@ module "cognito" {
 
   environment = "dev"
 }
+
+module "sqs" {
+  source = "../../modules/sqs"
+
+  environment = "dev"
+}
+
