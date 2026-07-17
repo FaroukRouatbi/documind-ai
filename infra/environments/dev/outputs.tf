@@ -41,3 +41,7 @@ output "api_repository_url" {
 output "worker_repository_url" {
   value = module.ecr.worker_repository_url
 }
+
+output "alb_dns_name" {
+  value = module.ecs.alb_dns_name
+}

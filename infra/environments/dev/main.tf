@@ -70,3 +70,29 @@ module "ecr" {
   environment = "dev"
 }
 
+module "ecs" {
+  source = "../../modules/ecs"
+
+  environment = "dev"
+
+  # Networking (from the network module)
+  vpc_id                 = module.network.vpc_id
+  public_subnet_ids       = module.network.public_subnet_ids
+  alb_security_group_id   = module.network.alb_security_group_id
+
+  # IAM roles (from the iam module)
+  execution_role_arn = module.iam.execution_role_arn
+  task_role_arn      = module.iam.task_role_arn
+
+  # Container images (from the ecr module)
+  api_repository_url    = module.ecr.api_repository_url
+  worker_repository_url = module.ecr.worker_repository_url
+
+  # Runtime configuration for the containers
+  documents_bucket_name        = module.s3.documents_bucket_name
+  db_secret_arn                = module.rds.db_secret_arn
+  redis_endpoint               = module.elasticache.redis_endpoint
+  sqs_queue_url                = module.sqs.queue_url
+  cognito_user_pool_id         = module.cognito.user_pool_id
+  cognito_user_pool_client_id  = module.cognito.user_pool_client_id
+}
