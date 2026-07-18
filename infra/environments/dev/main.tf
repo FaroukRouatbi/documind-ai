@@ -1,15 +1,15 @@
 terraform {
   backend "s3" {
-    bucket = "documind-ai-tfstate-847008502735"
-    key = "dev/network.tfstate"
-    region = "us-east-1"
-    encrypt = true
+    bucket       = "documind-ai-tfstate-847008502735"
+    key          = "dev/network.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
     use_lockfile = true
   }
 }
 
 provider "aws" {
-    region = "us-east-1"
+  region = "us-east-1"
 }
 
 module "network" {
@@ -30,25 +30,25 @@ module "s3" {
 module "iam" {
   source = "../../modules/iam"
 
-  environment = "dev"
+  environment          = "dev"
   documents_bucket_arn = module.s3.documents_bucket_arn
   db_secret_arn        = module.rds.db_secret_arn
-  sqs_queue_arn = module.sqs.queue_arn
+  sqs_queue_arn        = module.sqs.queue_arn
 }
 
 module "rds" {
   source = "../../modules/rds"
 
-  environment = "dev"
-  private_subnet_ids = module.network.private_subnet_ids
+  environment           = "dev"
+  private_subnet_ids    = module.network.private_subnet_ids
   rds_security_group_id = module.network.rds_security_group_id
 }
 
 module "elasticache" {
   source = "../../modules/elasticache"
 
-  environment = "dev"
-  private_subnet_ids = module.network.private_subnet_ids
+  environment             = "dev"
+  private_subnet_ids      = module.network.private_subnet_ids
   redis_security_group_id = module.network.rds_security_group_id
 }
 
@@ -76,9 +76,11 @@ module "ecs" {
   environment = "dev"
 
   # Networking (from the network module)
-  vpc_id                 = module.network.vpc_id
-  public_subnet_ids       = module.network.public_subnet_ids
-  alb_security_group_id   = module.network.alb_security_group_id
+  vpc_id                = module.network.vpc_id
+  public_subnet_ids     = module.network.public_subnet_ids
+  alb_security_group_id = module.network.alb_security_group_id
+  private_subnet_ids = module.network.private_subnet_ids
+  ecs_security_group_id = module.network.ecs_security_group_id
 
   # IAM roles (from the iam module)
   execution_role_arn = module.iam.execution_role_arn
@@ -89,10 +91,10 @@ module "ecs" {
   worker_repository_url = module.ecr.worker_repository_url
 
   # Runtime configuration for the containers
-  documents_bucket_name        = module.s3.documents_bucket_name
-  db_secret_arn                = module.rds.db_secret_arn
-  redis_endpoint               = module.elasticache.redis_endpoint
-  sqs_queue_url                = module.sqs.queue_url
-  cognito_user_pool_id         = module.cognito.user_pool_id
-  cognito_user_pool_client_id  = module.cognito.user_pool_client_id
+  documents_bucket_name       = module.s3.documents_bucket_name
+  db_secret_arn               = module.rds.db_secret_arn
+  redis_endpoint              = module.elasticache.redis_endpoint
+  sqs_queue_url               = module.sqs.queue_url
+  cognito_user_pool_id        = module.cognito.user_pool_id
+  cognito_user_pool_client_id = module.cognito.user_pool_client_id
 }
