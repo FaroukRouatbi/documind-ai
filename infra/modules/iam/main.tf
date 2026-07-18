@@ -77,6 +77,19 @@ data "aws_iam_policy_document" "task_permissions" {
 
     resources = [var.db_secret_arn]
   }
+
+  statement {
+    sid = "SQSAccess"
+
+    actions = [
+      "sqs:SendMessage",
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes"
+    ]
+
+    resources = [var.sqs_queue_arn]
+  }
 }
 
 resource "aws_iam_policy" "task_policy" {
@@ -87,4 +100,28 @@ resource "aws_iam_policy" "task_policy" {
 resource "aws_iam_role_policy_attachment" "task_attach" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.task_policy.arn
+}
+
+# --- ECS task execution role (used by the ECS agent: to access secrets) ---
+
+data "aws_iam_policy_document" "execution_secrets_permissions" {
+  statement {
+    sid = "SecretsAccess"
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [var.db_secret_arn]
+  }
+}
+
+resource "aws_iam_policy" "execution_secrets_policy" {
+  name   = "documind-ai-ecs-secrets-permissions"
+  policy = data.aws_iam_policy_document.execution_secrets_permissions.json
+}
+
+resource "aws_iam_role_policy_attachment" "execution_secrets_attach" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = aws_iam_policy.execution_secrets_policy.arn
 }
