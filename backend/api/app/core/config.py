@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # Raw value loaded from env/Secrets Manager
     db_credentials: str
     aws_region: str = "us-east-1"
+    environment: str = "dev"
 
     model_config = SettingsConfigDict(
         env_file=".env",

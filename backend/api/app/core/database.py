@@ -10,7 +10,10 @@ DATABASE_URL = (
     f"@{settings.db.host}:{settings.db.port}/{settings.db.dbname}"
 )
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL,
+                             echo= settings.environment != "prod",
+                             pool_pre_ping=True,
+)
 
 async_session_maker = async_sessionmaker(
     bind=engine,
@@ -19,7 +22,11 @@ async_session_maker = async_sessionmaker(
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
-        yield session
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
 
 class Base(DeclarativeBase):
     pass
