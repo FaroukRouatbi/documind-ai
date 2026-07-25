@@ -9,11 +9,16 @@ from app.core.config import settings
 
 from jwt.algorithms import RSAAlgorithm
 
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 JWKS_URL = f"https://cognito-idp.{settings.aws_region}.amazonaws.com/{settings.cognito_user_pool_id}/.well-known/jwks.json"
 _jwks_cache: dict | None = None
 
-
+@retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=5),
+        reraise=True,
+)
 async def get_jwks() -> dict:
     global _jwks_cache
     if _jwks_cache is None:
@@ -44,7 +49,11 @@ async def verify_token(token: str) -> dict:
     unverified_header = jwt.get_unverified_header(token)
     kid = unverified_header["kid"]
 
-    jwk_dict = await get_signing_key(kid)
+    try:
+        jwk_dict = await get_signing_key(kid)
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="Service unavailable")
+
     if jwk_dict is None:
         raise HTTPException(status_code=401, detail="Invalid token: unknown signing key")
     
