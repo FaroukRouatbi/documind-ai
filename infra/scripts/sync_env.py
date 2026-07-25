@@ -2,6 +2,7 @@ import argparse
 import json
 import subprocess
 import boto3
+import psycopg
 from pathlib import Path
 
 
@@ -91,9 +92,28 @@ def bootstrap_test_user(pool_id: str, region: str) -> None:
     )
     print("Set custom:tenant_id attribute")
 
+def ensure_app_role() -> None:
+    conn = psycopg.connect(
+        host="localhost", port=5433, dbname="documind",
+        user="documind", password="localdev",
+    )
+    conn.autocommit = True
+    with conn.cursor() as cur:
+        cur.execute("SELECT 1 FROM pg_roles WHERE rolname = 'documind_app'")
+        exists = cur.fetchone() is not None
+        if exists:
+            print("documind_app role already exists, skipping")
+        else:
+            cur.execute("CREATE ROLE documind_app WITH LOGIN PASSWORD %s", ("local_dev_app_pw_2026",))
+            cur.execute("GRANT USAGE ON SCHEMA public TO documind_app")
+            cur.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON documents, tenants TO documind_app")
+            print("Created documind_app role with grants")
+    conn.close()
+
 if __name__ == "__main__":
     args = parse_args()
     outputs = get_terraform_outputs(args.env_dir)
     update_env_file(Path(args.env_file), outputs, ENV_TO_TF_OUTPUT)
     bootstrap_test_user(outputs["cognito_user_pool_id"]["value"], "us-east-1")
+    ensure_app_role()
     print(json.dumps(outputs, indent=2))
