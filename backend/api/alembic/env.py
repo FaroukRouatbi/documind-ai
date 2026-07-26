@@ -5,14 +5,20 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.core.database import DATABASE_URL
-
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.core.database import Base
 
+from app.core.config import settings
+
 from app.documents.models import Document
 from app.tenants.models import Tenant
+
+MIGRATION_DATABASE_URL = (
+    f"postgresql+asyncpg://{settings.migration_db.username}:{settings.migration_db.password}"
+    f"@{settings.migration_db.host}:{settings.migration_db.port}/{settings.migration_db.dbname}"
+)
+
 
 
 # this is the Alembic Config object, which provides
@@ -56,7 +62,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = DATABASE_URL
+    url = MIGRATION_DATABASE_URL
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -76,7 +82,7 @@ async def run_migrations_online() -> None:
 
     """
     connectable = create_async_engine(
-        DATABASE_URL,
+        MIGRATION_DATABASE_URL,
         poolclass=pool.NullPool
     )
 

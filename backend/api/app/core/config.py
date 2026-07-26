@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     db_credentials: str
     aws_region: str = "us-east-1"
     environment: str = "dev"
+    migration_db_credentials: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -30,6 +31,11 @@ class Settings(BaseSettings):
     @property
     def db(self) -> DBCredentials:
         return DBCredentials.model_validate_json(self.db_credentials)
+
+    @computed_field
+    @property
+    def migration_db(self) -> DBCredentials:
+        return DBCredentials.model_validate_json(self.migration_db_credentials)
 
 
 settings = Settings()
