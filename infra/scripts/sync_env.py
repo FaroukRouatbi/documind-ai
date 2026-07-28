@@ -6,6 +6,9 @@ import psycopg
 from pathlib import Path
 
 
+TEST_TENANT_ID = "11111111-1111-1111-1111-111111111111"
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Sync Terraform outputs into a local .env file"
@@ -60,6 +63,7 @@ def update_env_file(env_path: Path, tf_outputs: dict, mapping: dict) -> None:
 
     env_path.write_text("\n".join(updated_lines) + "\n")
 
+
 def bootstrap_test_user(pool_id: str, region: str) -> None:
     client = boto3.client("cognito-idp", region_name=region)
 
@@ -88,9 +92,10 @@ def bootstrap_test_user(pool_id: str, region: str) -> None:
     client.admin_update_user_attributes(
         UserPoolId=pool_id,
         Username="testuser@example.com",
-        UserAttributes=[{"Name": "custom:tenant_id", "Value": "test-tenant-123"}],
+        UserAttributes=[{"Name": "custom:tenant_id", "Value": TEST_TENANT_ID}],
     )
     print("Set custom:tenant_id attribute")
+
 
 def ensure_app_role() -> None:
     conn = psycopg.connect(
@@ -110,10 +115,32 @@ def ensure_app_role() -> None:
             print("Created documind_app role with grants")
     conn.close()
 
+
+def ensure_test_tenant() -> None:
+    conn = psycopg.connect(
+        host="localhost", port=5433, dbname="documind",
+        user="documind", password="localdev",
+    )
+    conn.autocommit = True
+    with conn.cursor() as cur:
+        cur.execute("SELECT 1 FROM tenants WHERE id = %s", (TEST_TENANT_ID,))
+        exists = cur.fetchone() is not None
+        if exists:
+            print("Test tenant already exists, skipping")
+        else:
+            cur.execute(
+                "INSERT INTO tenants (id, name) VALUES (%s, %s)",
+                (TEST_TENANT_ID, "Test Tenant"),
+            )
+            print("Created test tenant")
+    conn.close()
+
+
 if __name__ == "__main__":
     args = parse_args()
     outputs = get_terraform_outputs(args.env_dir)
     update_env_file(Path(args.env_file), outputs, ENV_TO_TF_OUTPUT)
     bootstrap_test_user(outputs["cognito_user_pool_id"]["value"], "us-east-1")
     ensure_app_role()
+    ensure_test_tenant()
     print(json.dumps(outputs, indent=2))
