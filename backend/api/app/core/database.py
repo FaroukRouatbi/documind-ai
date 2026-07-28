@@ -7,7 +7,8 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.security import get_current_user
 
-
+class Base(DeclarativeBase):
+    pass
 
 DATABASE_URL = (
     f"postgresql+asyncpg://{settings.db.username}:{settings.db.password}"
@@ -28,6 +29,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         try:
             yield session
+            await session.commit()
         except Exception:
             await session.rollback()
             raise
@@ -38,10 +40,10 @@ async def get_tenant_db(
 ) -> AsyncGenerator[AsyncSession, None]:
     tenant_id = current_user["tenant_id"]
     await session.execute(
-        text("SET LOCAL app.tenant_id = :tenant_id"),
-        {"tenant_id": tenant_id},
-    )
+    text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
+    {"tenant_id": tenant_id},
+)
     yield session
 
-class Base(DeclarativeBase):
-    pass
+from app.documents.models import Document  
+from app.tenants.models import Tenant  
