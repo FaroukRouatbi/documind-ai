@@ -39,3 +39,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+API_V1_PREFIX = "/v1"

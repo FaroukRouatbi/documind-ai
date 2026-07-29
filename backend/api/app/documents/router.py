@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.core.config import API_V1_PREFIX
 
-router = APIRouter(prefix="/v1", tags=["documents"])
+router = APIRouter(prefix=API_V1_PREFIX, tags=["documents"])
 
