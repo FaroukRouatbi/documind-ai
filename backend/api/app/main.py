@@ -4,8 +4,15 @@ from app.core.config import settings
 from app.auth.router import router as auth_router
 from app.documents.router import router as doc_router
 
+from app.core.logging import configure_logging
+from app.core.middleware import CorrelationIdMiddleware
+
 def create_app() -> FastAPI:
+    configure_logging()
+
     app = FastAPI(title="DocuMind AI API")
+
+    app.add_middleware(CorrelationIdMiddleware)
 
     @app.get("/health")
     async def health():
