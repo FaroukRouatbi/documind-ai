@@ -1,8 +1,15 @@
 import uuid
 
-from sqlalchemy import select
+from dataclasses import dataclass
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.documents.models import Document
+
+@dataclass
+class PaginatedDocuments:
+    documents: list[Document]
+    total: int
 
 class DocumentRepository:
     def __init__(self, session: AsyncSession):
@@ -34,9 +41,16 @@ class DocumentRepository:
 
         return result.scalar_one_or_none()
 
-    async def list_for_tenant(self) -> list[Document]:
-        result = await self.session.execute(select(Document))
-        return list(result.scalars().all())
+    async def list_for_tenant(self, limit: int = 20, offset: int = 0) -> PaginatedDocuments:
+        result = await self.session.execute(
+            select(Document).limit(limit).offset(offset)
+        )
+        documents = list(result.scalars().all())
+
+        count_result = await self.session.execute(select(func.count()).select_from(Document))
+        total = count_result.scalar_one()
+
+        return PaginatedDocuments(documents=documents, total=total)
 
     async def update_status(self, document_id: uuid.UUID, status: str) -> Document | None:
         document = await self.get_by_id(document_id)
