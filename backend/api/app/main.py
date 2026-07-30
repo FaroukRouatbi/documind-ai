@@ -5,7 +5,7 @@ from app.auth.router import router as auth_router
 from app.documents.router import router as doc_router
 
 from app.core.logging import configure_logging
-from app.core.middleware import CorrelationIdMiddleware
+from app.core.middleware import CorrelationIdMiddleware, RequestSizeLimitMiddleware
 
 def create_app() -> FastAPI:
     configure_logging()
@@ -13,6 +13,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="DocuMind AI API")
 
     app.add_middleware(CorrelationIdMiddleware)
+    app.add_middleware(RequestSizeLimitMiddleware)
 
     @app.get("/health")
     async def health():
