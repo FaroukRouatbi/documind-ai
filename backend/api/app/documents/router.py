@@ -8,12 +8,19 @@ from app.documents.schemas import DocumentResponse, PaginatedDocumentsResponse
 
 router = APIRouter(prefix=API_V1_PREFIX, tags=["documents"])
 
-@router.get("/documents", response_model=PaginatedDocumentsResponse)
+@router.get("/documents",
+            response_model=PaginatedDocumentsResponse,
+            summary="List documents for the current tenant",
+)
 async def list_documents(
     limit: int = 20,
     offset: int = 0,
     session : AsyncSession = Depends(get_tenant_db),
 ):
+    """
+    Returns a paginated list of documents belonging to the authenticated
+    user's tenant. Results are automatically scoped by row-level security.
+    """
     repo = DocumentRepository(session)
     result = await repo.list_for_tenant(limit=limit, offset=offset)
 
