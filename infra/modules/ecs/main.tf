@@ -73,7 +73,7 @@ resource "aws_ecs_task_definition" "api" {
   container_definitions = jsonencode([
     {
       name  = "api"
-      image = "${var.api_repository_url}:latest"
+      image = "${var.api_repository_url}:v3"
 
       portMappings = [
         {
@@ -91,7 +91,8 @@ resource "aws_ecs_task_definition" "api" {
       ]
 
       secrets = [
-        { name = "DB_CREDENTIALS", valueFrom = var.db_secret_arn }
+        { name = "DB_CREDENTIALS", valueFrom = var.db_secret_arn },
+        { name = "MIGRATION_DB_CREDENTIALS", valueFrom = var.db_secret_arn }
       ]
 
       logConfiguration = {
