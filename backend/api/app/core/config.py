@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     db_credentials: str
     aws_region: str = "us-east-1"
     environment: str = "dev"
-    migration_db_credentials: str
+    migration_db_credentials: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
