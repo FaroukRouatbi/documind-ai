@@ -49,3 +49,7 @@ output "alb_dns_name" {
 output "sqs_queue_url" {
   value = module.sqs.queue_url
 }
+
+output "private_subnet_ids" {
+  value = module.network.private_subnet_ids
+}
