@@ -26,3 +26,4 @@ build/
 
 migration-network.json
 migration-overrides.json
+upload-test.json
