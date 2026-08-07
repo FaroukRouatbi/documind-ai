@@ -69,3 +69,11 @@ class DocumentRepository:
         await self.session.delete(document)
         await self.session.flush()
         return True
+
+    async def get_by_s3_key(self, s3_key: str) -> Document | None:
+        result = await self.session.execute(
+            select(Document).where(Document.s3_key == s3_key)
+        )
+        return result.scalar_one_or_none()
+
+    

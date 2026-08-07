@@ -1,9 +1,13 @@
+import uuid
+
 from fastapi import Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
 from app.core.config import settings
 from collections.abc import AsyncGenerator
 from sqlalchemy.orm import DeclarativeBase
+from contextlib import asynccontextmanager
+
 
 from app.core.security import get_current_user
 
@@ -45,5 +49,20 @@ async def get_tenant_db(
 )
     yield session
 
+@asynccontextmanager
+async def get_worker_session(tenant_id: uuid.UUID) -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        try:
+            await session.execute(
+                text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
+                {"tenant_id": str(tenant_id)}
+            )
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
 from app.documents.models import Document  
 from app.tenants.models import Tenant  
+from app.chunks.models import Chunk

@@ -13,6 +13,7 @@ from app.core.config import settings
 
 from app.documents.models import Document
 from app.tenants.models import Tenant
+from app.chunks.models import Chunk
 
 MIGRATION_DATABASE_URL = (
     f"postgresql+asyncpg://{settings.migration_db.username}:{settings.migration_db.password}"
