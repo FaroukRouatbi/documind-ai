@@ -3,6 +3,8 @@ from markdown_it import MarkdownIt
 import pysbd
 import tiktoken
 
+from app.ingestion.schemas import ChunkData
+
 encoder = tiktoken.get_encoding("cl100k_base")
 
 segmenter = pysbd.Segmenter(language="en", clean=False)
@@ -83,8 +85,56 @@ def split_section(content: str, budget: int = 500) -> list[str]:
     paragraphs = content.split("\n\n")
     return pack(paragraphs, budget, lambda p: split_into_sentences(p, budget), joiner="\n\n")
 
+def chunk_document(markdown: str, *, embedding_model: str, embedding_version: int, budget: int = 500) -> list[ChunkData]:
+    sections = parse_into_sections(markdown)
+    chunk_index = 0
+    chunks = []
+
+    for heading_path, content in sections:
+        pieces = split_section(content, budget)
+
+        for piece in pieces:
+            chunk = ChunkData(
+                content=piece,
+                chunk_index=chunk_index,
+                embedding=None,
+                embedding_model=embedding_model,
+                embedding_version=embedding_version,
+                heading_path=heading_path,
+                token_count=count_tokens(piece),
+                parent_index=None
+            )
+            chunks.append(chunk)
+            chunk_index += 1
+
+    return chunks
 
 if __name__ == "__main__":
-    one_big_para = "This is a sentence. " * 200   # one paragraph, no blank lines, way over budget
-    result = split_section(one_big_para)
-    print(f"{len(result)} chunks, sizes: {[count_tokens(c) for c in result]}")
+    sample = """Intro text before any heading.
+
+# Q3 Report
+
+Some opening prose.
+
+## Revenue
+
+Revenue grew this quarter.
+
+### EMEA
+
+| Region | Growth |
+|--------|--------|
+| France | 12%    |
+
+## Costs
+
+Costs were flat.
+"""
+    chunks = chunk_document(
+        sample,
+        embedding_model="amazon.titan-embed-text-v2:0",
+        embedding_version=1,
+    )
+    for c in chunks:
+        print(f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}")
+        print(f"    content={c.content[:50]!r}")
