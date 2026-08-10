@@ -40,6 +40,8 @@ class BedrockEmbeddingClient:
             reset_timeout=30,
             exclude=[_is_permanent],
         )
+        self._embedding_version = 1
+
 
     async def embed(self, text: str) -> list[float]:
         return await asyncio.to_thread(self._embed_guarded, text)
@@ -65,6 +67,14 @@ class BedrockEmbeddingClient:
         response = self._client.invoke_model(modelId=self._model_id, body=body)
         payload = json.loads(response["body"].read())
         return payload["embedding"]
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    @property
+    def embedding_version(self) -> int:
+        return self._embedding_version
 
 if __name__ == "__main__":
     def make_error(code):
