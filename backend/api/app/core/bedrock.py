@@ -11,6 +11,7 @@ TRANSIENT_ERROR_CODES = {
     "ServiceUnavailableException",
     "ModelTimeoutException",
     "InternalServerException",
+    "ModelNotReadyException",
 }
 
 
