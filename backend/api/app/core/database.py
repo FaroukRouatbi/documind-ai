@@ -62,7 +62,3 @@ async def get_worker_session(tenant_id: uuid.UUID) -> AsyncGenerator[AsyncSessio
         except Exception:
             await session.rollback()
             raise
-
-from app.documents.models import Document  
-from app.tenants.models import Tenant  
-from app.chunks.models import Chunk

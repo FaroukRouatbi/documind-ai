@@ -1,7 +1,7 @@
 import uuid
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Index
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -10,6 +10,15 @@ from app.core.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class Chunk(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     __tablename__ = "chunks"
+    __table_args__ = (
+        Index(
+            "ix_chunks_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 128},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
 
     tenant_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tenants.id"))
     document_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("documents.id"), index=True)
