@@ -27,6 +27,7 @@ class DocumentRepository:
             filename=filename,
             s3_key=s3_key,
             modality=modality,
+            status="pending",
         )
 
         self.session.add(document)
