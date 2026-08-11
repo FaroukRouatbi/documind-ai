@@ -3,8 +3,8 @@ import asyncio
 
 import boto3
 import pybreaker
-from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception
 from botocore.exceptions import ClientError
+from botocore.config import Config
 
 TRANSIENT_ERROR_CODES = {
     "ThrottlingException",
@@ -31,32 +31,28 @@ class BedrockEmbeddingClient:
         region: str,
         model_id: str = "amazon.titan-embed-text-v2:0",
         dimensions: int = 1024,
+        embedding_version: int = 1,
     ):
-        self._client = boto3.client("bedrock-runtime", region_name=region)
+        self._client = boto3.client(
+            "bedrock-runtime",
+            region_name=region,
+            config=Config(retries={"max_attempts": 4, "mode": "standard"}),
+        )
         self._model_id = model_id
         self._dimensions = dimensions
+        self._embedding_version = embedding_version
         self._breaker = pybreaker.CircuitBreaker(
             fail_max=5,
             reset_timeout=30,
             exclude=[_is_permanent],
         )
-        self._embedding_version = 1
 
 
     async def embed(self, text: str) -> list[float]:
         return await asyncio.to_thread(self._embed_guarded, text)
 
     def _embed_guarded(self, text: str) -> list[float]:
-        return self._breaker.call(self._embed_with_retry, text)
-
-    @retry(
-        retry=retry_if_exception(_is_transient),
-        stop=stop_after_attempt(4),
-        wait=wait_exponential_jitter(initial=1, max=10),
-        reraise=True,
-    )
-    def _embed_with_retry(self, text: str) -> list[float]:
-        return self._embed_sync(text)
+        return self._breaker.call(self._embed_sync, text)
 
     def _embed_sync(self, text: str) -> list[float]:
         body = json.dumps({
