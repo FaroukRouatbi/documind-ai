@@ -76,3 +76,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "documents" {
     }
   }
 }
+
+resource "aws_s3_bucket_notification" "documents" {
+  bucket = aws_s3_bucket.documents.id
+
+  queue {
+    queue_arn = var.ingestion_queue_arn
+    events = [ "s3:ObjectCreated:*" ]
+  }
+}

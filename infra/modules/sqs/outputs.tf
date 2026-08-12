@@ -2,7 +2,7 @@ output "queue_url" {
   value = aws_sqs_queue.ingestion.url
 }
 
-output "queue_arn" {
+output "ingestion_queue_arn" {
   value = aws_sqs_queue.ingestion.arn
 }
 

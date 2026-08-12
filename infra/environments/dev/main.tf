@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 module "network" {
@@ -25,15 +25,19 @@ module "s3" {
   source = "../../modules/s3"
 
   environment = "dev"
+  ingestion_queue_arn = module.sqs.ingestion_queue_arn
+  
+  depends_on = [ module.sqs ]
 }
 
 module "iam" {
   source = "../../modules/iam"
 
-  environment          = "dev"
+  environment          = var.environment
   documents_bucket_arn = module.s3.documents_bucket_arn
   db_secret_arn        = module.rds.db_secret_arn
   sqs_queue_arn        = module.sqs.queue_arn
+  aws_region = var.aws_region
 }
 
 module "rds" {
@@ -62,6 +66,7 @@ module "sqs" {
   source = "../../modules/sqs"
 
   environment = "dev"
+  documents_bucket_arn = module.s3.documents_bucket_arn
 }
 
 module "ecr" {
