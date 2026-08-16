@@ -4,6 +4,10 @@
 *.tfstate.backup
 *.tfvars          # if you put any secrets/account-specific values in tfvars files
 crash.log
+*.tfplan
+tfplan
+plan.txt
+*.tfstate.*
 
 # Python
 __pycache__/
