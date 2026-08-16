@@ -13,3 +13,11 @@ variable "db_secret_arn" {
 variable "sqs_queue_arn" {
   type = string
 }
+
+variable "aws_region" {
+  type = string
+}
+
+variable "documents_kms_key_arn" {
+  type = string
+}

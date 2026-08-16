@@ -68,12 +68,12 @@ resource "aws_ecs_task_definition" "api" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = var.execution_role_arn
-  task_role_arn            = var.task_role_arn
+  task_role_arn            = var.api_task_role_arn
 
   container_definitions = jsonencode([
     {
       name  = "api"
-      image = "${var.api_repository_url}:v4"
+      image = "${var.api_repository_url}:v5"
 
       portMappings = [
         {
@@ -129,7 +129,7 @@ resource "aws_ecs_task_definition" "worker" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = var.execution_role_arn
-  task_role_arn            = var.task_role_arn
+  task_role_arn            = var.worker_task_role_arn
 
   container_definitions = jsonencode([
     {
@@ -216,7 +216,7 @@ resource "aws_ecs_service" "worker" {
   }
 
   tags = {
-    Project     = "documoond-ai"
+    Project     = "documind-ai"
     Environment = var.environment
   }
 }
