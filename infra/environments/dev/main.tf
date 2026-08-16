@@ -1,17 +1,3 @@
-terraform {
-  backend "s3" {
-    bucket       = "documind-ai-tfstate-847008502735"
-    key          = "dev/network.tfstate"
-    region       = "us-east-1"
-    encrypt      = true
-    use_lockfile = true
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-}
-
 module "network" {
   source = "../../modules/network"
 
@@ -24,10 +10,7 @@ module "network" {
 module "s3" {
   source = "../../modules/s3"
 
-  environment = "dev"
-  ingestion_queue_arn = module.sqs.ingestion_queue_arn
-  
-  depends_on = [ module.sqs ]
+  environment = var.environment
 }
 
 module "iam" {
@@ -36,14 +19,15 @@ module "iam" {
   environment          = var.environment
   documents_bucket_arn = module.s3.documents_bucket_arn
   db_secret_arn        = module.rds.db_secret_arn
-  sqs_queue_arn        = module.sqs.queue_arn
+  sqs_queue_arn        = module.sqs.ingestion_queue_arn
   aws_region = var.aws_region
+  documents_kms_key_arn = module.s3.documents_kms_key_arn
 }
 
 module "rds" {
   source = "../../modules/rds"
 
-  environment           = "dev"
+  environment           = var.environment
   private_subnet_ids    = module.network.private_subnet_ids
   rds_security_group_id = module.network.rds_security_group_id
 }
@@ -53,32 +37,31 @@ module "elasticache" {
 
   environment             = "dev"
   private_subnet_ids      = module.network.private_subnet_ids
-  redis_security_group_id = module.network.rds_security_group_id
+  redis_security_group_id = module.network.redis_security_group_id
 }
 
 module "cognito" {
   source = "../../modules/cognito"
 
-  environment = "dev"
+  environment = var.environment
 }
 
 module "sqs" {
   source = "../../modules/sqs"
 
-  environment = "dev"
-  documents_bucket_arn = module.s3.documents_bucket_arn
+  environment = var.environment
 }
 
 module "ecr" {
   source = "../../modules/ecr"
 
-  environment = "dev"
+  environment = var.environment
 }
 
 module "ecs" {
   source = "../../modules/ecs"
 
-  environment = "dev"
+  environment = var.environment
 
   # Networking (from the network module)
   vpc_id                = module.network.vpc_id
@@ -89,7 +72,8 @@ module "ecs" {
 
   # IAM roles (from the iam module)
   execution_role_arn = module.iam.execution_role_arn
-  task_role_arn      = module.iam.task_role_arn
+  api_task_role_arn = module.iam.api_task_role_arn
+  worker_task_role_arn =  module.iam.worker_task_role_arn
 
   # Container images (from the ecr module)
   api_repository_url    = module.ecr.api_repository_url
@@ -102,4 +86,32 @@ module "ecs" {
   sqs_queue_url               = module.sqs.queue_url
   cognito_user_pool_id        = module.cognito.user_pool_id
   cognito_user_pool_client_id = module.cognito.user_pool_client_id
+}
+
+resource "aws_sqs_queue_policy" "ingestion_allow_s3" {
+  queue_url = module.sqs.queue_url
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "s3.amazonaws.com" }
+      Action    = "sqs:SendMessage"
+      Resource  = module.sqs.ingestion_queue_arn
+      Condition = {
+        ArnEquals = { "aws:SourceArn" = module.s3.documents_bucket_arn }
+      }
+    }]
+  })
+}
+
+resource "aws_s3_bucket_notification" "documents" {
+  bucket = module.s3.documents_bucket_id
+
+  queue {
+    queue_arn = module.sqs.ingestion_queue_arn
+    events    = ["s3:ObjectCreated:*"]
+  }
+
+  depends_on = [aws_sqs_queue_policy.ingestion_allow_s3]
 }

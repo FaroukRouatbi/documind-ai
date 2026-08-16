@@ -14,6 +14,10 @@ output "documents_bucket_arn" {
   value = module.s3.documents_bucket_arn
 }
 
+output "documents_bucket_id" {
+  value = module.s3.documents_bucket_id
+}
+
 output "db_endpoint" {
   value = module.rds.db_endpoint
 }
