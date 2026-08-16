@@ -26,7 +26,7 @@ resource "aws_db_parameter_group" "db" {
 
 resource "aws_db_instance" "db" {
   engine         = "postgres"
-  engine_version = "17"
+  engine_version = "17.10"
   instance_class = "db.t4g.micro"
 
   allocated_storage = 20
@@ -40,6 +40,7 @@ resource "aws_db_instance" "db" {
 
   publicly_accessible = false
   skip_final_snapshot  = true
+  storage_encrypted = true
 
   tags = {
     Name        = "${var.environment}-documind-db"
