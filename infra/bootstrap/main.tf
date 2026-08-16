@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.92"
+      version = "~> 6.0"
     }
 
     random = {
@@ -11,11 +11,17 @@ terraform {
     }
   }
 
-  required_version = ">= 1.2"
+  required_version = ">= 1.9, < 2.0"
 }
 
 provider "aws" {
   region = "us-east-1" 
+  default_tags {
+    tags = {
+      Project   = "documind-ai"
+      ManagedBy = "terraform"
+    }
+  }
 }
 
 data "aws_caller_identity" "current" {}
