@@ -7,6 +7,8 @@ from app.documents.router import router as doc_router
 from app.core.logging import configure_logging
 from app.core.middleware import CorrelationIdMiddleware, RequestSizeLimitMiddleware
 
+import app.models_registry
+
 def create_app() -> FastAPI:
     configure_logging()
 
