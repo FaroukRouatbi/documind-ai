@@ -11,6 +11,9 @@ from app.core.config import settings
 from app.core.bedrock import BedrockEmbeddingClient
 from app.ingestion.text import TextIngestionStrategy
 from app.worker.processor import process_upload
+from app.core.fake_embedder import FakeEmbedder
+
+import app.models_registry
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +32,8 @@ async def handle_message(message, *, s3_client, strategy) -> None:
 
 async def run() -> None:
     s3_client = S3Client(settings.aws_region)
-    embedder = BedrockEmbeddingClient(settings.aws_region)
+    ##embedder = BedrockEmbeddingClient(settings.aws_region)
+    embedder = FakeEmbedder() 
     strategy = TextIngestionStrategy(embedder)
     sqs = boto3.client("sqs", region_name=settings.aws_region)
 
@@ -52,19 +56,26 @@ async def run() -> None:
 
         for message in messages:
             try:
-                await handle_message(message, s3_client=s3_client, strategy=strategy)
-            except pybreaker.CircuitBreakerError:
-                logger.warning("service_down_leaving_message")
-                continue
+                try:
+                    await handle_message(message, s3_client=s3_client, strategy=strategy)
+                except pybreaker.CircuitBreakerError:
+                    logger.warning("service_down_leaving_message")
+                    continue
+                except Exception:
+                    logger.exception("message_handling_failed")
+                    continue
+                try:
+                    await asyncio.to_thread(
+                        sqs.delete_message,
+                        QueueUrl=settings.sqs_queue_url,
+                        ReceiptHandle=message["ReceiptHandle"],
+                    )
+                except Exception:
+                    logger.exception("delete_message_failed")
+                    continue
             except Exception:
-                logger.exception("message_handling_failed")
+                logger.exception("unexpected_message_error")
                 continue
-            else:
-                await asyncio.to_thread(
-                    sqs.delete_message,
-                    QueueUrl=settings.sqs_queue_url,
-                    ReceiptHandle=message["ReceiptHandle"],
-                )
 
 if __name__ == "__main__":
     asyncio.run(run())

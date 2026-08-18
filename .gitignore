@@ -31,3 +31,9 @@ build/
 migration-network.json
 migration-overrides.json
 upload-test.json
+
+apilog.txt
+log.txt
+body.json
+backend/api/body.json
+backend/api/test.md
