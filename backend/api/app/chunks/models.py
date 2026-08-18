@@ -27,7 +27,7 @@ class Chunk(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     content: Mapped[str] = mapped_column()
     embedding: Mapped[list[float] | None] = mapped_column(Vector(1024), nullable=True)
     embedding_model: Mapped[str] = mapped_column()
-    embedding_version: Mapped[int] = mapped_column()
+    embedding_version: Mapped[str] = mapped_column()
     heading_path: Mapped[str | None] = mapped_column(nullable=True)
     ingestion_strategy: Mapped[str] = mapped_column()
     token_count: Mapped[int | None] = mapped_column(nullable=True)

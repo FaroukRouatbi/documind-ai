@@ -6,7 +6,7 @@ class ChunkData:
     chunk_index: int
     embedding: list[float] | None
     embedding_model: str
-    embedding_version: int
+    embedding_version: str
     heading_path: str | None
     token_count: int | None
     parent_index: int | None
