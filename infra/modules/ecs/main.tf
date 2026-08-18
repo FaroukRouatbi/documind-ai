@@ -73,7 +73,7 @@ resource "aws_ecs_task_definition" "api" {
   container_definitions = jsonencode([
     {
       name  = "api"
-      image = "${var.api_repository_url}:v5"
+      image = "${var.api_repository_url}:${var.api_image_tag}"
 
       portMappings = [
         {
@@ -134,7 +134,7 @@ resource "aws_ecs_task_definition" "worker" {
   container_definitions = jsonencode([
     {
       name  = "worker"
-      image = "${var.worker_repository_url}:latest"
+      image = "${var.worker_repository_url}:${var.worker_image_tag}"
 
       secrets = [
         { name = "DB_CREDENTIALS", valueFrom = var.db_secret_arn }

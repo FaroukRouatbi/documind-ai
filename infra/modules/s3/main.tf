@@ -23,6 +23,7 @@ resource "aws_s3_bucket" "documents" {
     Purpose = "documents"
   }
 
+  force_destroy = true
   # Deliberately no prevent_destroy in dev — see note below.
 }
 

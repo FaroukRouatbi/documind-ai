@@ -65,3 +65,11 @@ variable "private_subnet_ids" {
 variable "ecs_security_group_id" {
   type = string
 }
+
+variable "api_image_tag" {
+  type = string
+}
+
+variable "worker_image_tag" {
+  type = string
+}
