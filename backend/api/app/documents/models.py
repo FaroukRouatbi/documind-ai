@@ -16,3 +16,4 @@ class Document(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     status: Mapped[str] = mapped_column(default="processing")
     modality: Mapped[str] = mapped_column()
     ingestion_strategy: Mapped[str | None] = mapped_column()
+    correlation_id: Mapped[str | None] = mapped_column(nullable=True)

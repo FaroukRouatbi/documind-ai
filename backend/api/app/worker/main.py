@@ -20,6 +20,7 @@ import app.models_registry
 logger = structlog.get_logger()
 
 async def handle_message(message, *, s3_client, strategy) -> None:
+    structlog.contextvars.clear_contextvars()
     body = json.loads(message["Body"])
 
     if "Records" not in body:
@@ -29,8 +30,8 @@ async def handle_message(message, *, s3_client, strategy) -> None:
     for record in body["Records"]:
         bucket = record["s3"]["bucket"]["name"]
         key = urllib.parse.unquote_plus(record["s3"]["object"]["key"])
-        log = logger.bind(bucket=bucket, s3_key=key)
-        log.info("processing_record")
+        structlog.contextvars.bind_contextvars(bucket=bucket, s3_key=key)
+        logger.info("processing_record")
         await process_upload(bucket, key, s3_client=s3_client, strategy=strategy)
 
 async def run() -> None:

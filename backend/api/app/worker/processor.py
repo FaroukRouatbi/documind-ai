@@ -1,4 +1,4 @@
-import logging
+import structlog
 import uuid
 
 import pybreaker
@@ -9,7 +9,7 @@ from app.documents.s3 import S3Client
 from app.ingestion.base import IngestionStrategy
 from app.chunks.repository import ChunkRepository
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 async def process_upload(
         bucket: str,
@@ -25,8 +25,10 @@ async def process_upload(
         document = await doc_repo.get_by_s3_key(s3_key)
 
         if document is None:
-            logger.warning("orphan_upload", extra={"s3_key": s3_key, "tenant_id": str(tenant_id)})
+            logger.warning("orphan_upload", s3_key=s3_key, tenant_id=str(tenant_id))
             return
+
+        structlog.contextvars.bind_contextvars(correlation_id=document.correlation_id)
 
         try:
             await doc_repo.update_status(document.id, "processing")
@@ -45,11 +47,11 @@ async def process_upload(
             await doc_repo.update_status(document.id, "ready")
 
         except pybreaker.CircuitBreakerError:
-            logger.warning("service_down_retry", extra={"s3_key": s3_key})
+            logger.warning("service_down_retry", s3_key=s3_key)
             raise
 
         except Exception:
-            logger.exception("ingestion_failed", extra={"s3_key": s3_key})
+            logger.exception("ingestion_failed", s3_key=s3_key)
             async with get_worker_session(tenant_id) as fail_session:
                 await DocumentRepository(fail_session).update_status(document.id, "failed")
             return

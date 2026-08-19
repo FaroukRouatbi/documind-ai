@@ -21,6 +21,7 @@ class DocumentRepository:
         filename: str,
         s3_key: str,
         modality: str,
+        correlation_id: str | None = None,
     ) -> Document:
         document = Document(
             tenant_id=tenant_id,
@@ -28,6 +29,7 @@ class DocumentRepository:
             s3_key=s3_key,
             modality=modality,
             status="pending",
+            correlation_id=correlation_id,
         )
 
         self.session.add(document)

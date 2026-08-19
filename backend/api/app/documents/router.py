@@ -2,6 +2,7 @@ import uuid
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from structlog.contextvars import get_contextvars
 
 from app.core.config import API_V1_PREFIX
 from app.core.database import get_tenant_db
@@ -48,11 +49,15 @@ async def create_upload(
     s3_key = f"{tenant_id}/{uuid.uuid4()}-{request.filename}"
 
     repo = DocumentRepository(session)
+
+    correlation_id = get_contextvars().get("correlation_id")
+
     document = await repo.create(
         tenant_id=tenant_id,
         filename=request.filename,
         s3_key=s3_key,
         modality=request.modality,
+        correlation_id=correlation_id,
     )
 
     presigned = generate_upload_post(s3_key, request.content_type)
