@@ -3,11 +3,15 @@ import logging
 import structlog
 from app.core.config import settings
 
+from structlog.tracebacks import ExceptionDictTransformer
+
+
 def get_shared_processors() -> list:
     return [
         structlog.contextvars.merge_contextvars,
+        structlog.stdlib.add_logger_name,
         structlog.processors.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso")
+        structlog.processors.TimeStamper(fmt="iso"),
     ]
 
 def configure_logging() -> None:
@@ -15,15 +19,34 @@ def configure_logging() -> None:
 
     if settings.environment == "prod":
         renderer = structlog.processors.JSONRenderer()
+        shared_processors = shared_processors + [
+            structlog.processors.ExceptionRenderer(
+                ExceptionDictTransformer(show_locals=False)
+            )
+        ]
     else:
         renderer = structlog.dev.ConsoleRenderer()
 
-    logging.basicConfig(
-        format="%(message)s",
-        level=logging.INFO,
+    structlog.configure(
+        processors=shared_processors + [
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        cache_logger_on_first_use=True,
     )
 
-    structlog.configure(
-        processors=shared_processors + [renderer],
-        logger_factory=structlog.stdlib.LoggerFactory(),
+    formatter = structlog.stdlib.ProcessorFormatter(
+        foreign_pre_chain=shared_processors,
+        processors=[
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+            renderer,
+        ],
     )
+
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    root = logging.getLogger()
+    root.handlers.clear()
+    root.addHandler(handler)
+    root.setLevel(logging.INFO)
