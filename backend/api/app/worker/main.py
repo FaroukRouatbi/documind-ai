@@ -1,6 +1,6 @@
 import asyncio
 import json
-import logging
+import structlog
 import urllib.parse
 
 import boto3
@@ -12,11 +12,12 @@ from app.core.bedrock import BedrockEmbeddingClient
 from app.ingestion.text import TextIngestionStrategy
 from app.worker.processor import process_upload
 from app.core.fake_embedder import FakeEmbedder
+from app.core.logging import configure_logging
 
 import app.models_registry
 
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 async def handle_message(message, *, s3_client, strategy) -> None:
     body = json.loads(message["Body"])
@@ -28,16 +29,19 @@ async def handle_message(message, *, s3_client, strategy) -> None:
     for record in body["Records"]:
         bucket = record["s3"]["bucket"]["name"]
         key = urllib.parse.unquote_plus(record["s3"]["object"]["key"])
+        log = logger.bind(bucket=bucket, s3_key=key)
+        log.info("processing_record")
         await process_upload(bucket, key, s3_client=s3_client, strategy=strategy)
 
 async def run() -> None:
+    configure_logging()
     s3_client = S3Client(settings.aws_region)
     ##embedder = BedrockEmbeddingClient(settings.aws_region)
     embedder = FakeEmbedder() 
     strategy = TextIngestionStrategy(embedder)
     sqs = boto3.client("sqs", region_name=settings.aws_region)
 
-    logger.info("worker_started")
+    logger.info("worker_started", queue_url=settings.sqs_queue_url, embedder=type(embedder).__name__)
 
     while True:
         try:
