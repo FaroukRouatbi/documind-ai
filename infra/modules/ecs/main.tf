@@ -143,7 +143,9 @@ resource "aws_ecs_task_definition" "worker" {
       environment = [
         { name = "DOCUMENTS_BUCKET_NAME", value = var.documents_bucket_name },
         { name = "REDIS_ENDPOINT", value = var.redis_endpoint },
-        { name = "SQS_QUEUE_URL", value = var.sqs_queue_url }
+        { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
+        # "Local" selects the stdout EMF sink; container stdout → awslogs → CloudWatch extracts metrics (no agent sidecar)
+        { name = "AWS_EMF_ENVIRONMENT", value = "Local" }
       ]
 
       logConfiguration = {
