@@ -1,6 +1,6 @@
 import subprocess
 
-from infra.scripts.cognito_bootstrap import bootstrap_test_user
+from cognito_bootstrap import bootstrap_test_user
 
 def get_pool_id(env_dir: str) -> str:
     result = subprocess.run(
