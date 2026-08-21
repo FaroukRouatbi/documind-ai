@@ -19,13 +19,20 @@ def configure_logging() -> None:
 
     if settings.environment == "prod":
         renderer = structlog.processors.JSONRenderer()
-        shared_processors = shared_processors + [
+        # exception processor runs on the RENDER side, only at final formatting
+        formatter_processors = [
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
             structlog.processors.ExceptionRenderer(
                 ExceptionDictTransformer(show_locals=False)
-            )
+            ),
+            renderer,
         ]
     else:
         renderer = structlog.dev.ConsoleRenderer()
+        formatter_processors = [
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+            renderer,
+        ]
 
     structlog.configure(
         processors=shared_processors + [
@@ -37,10 +44,7 @@ def configure_logging() -> None:
 
     formatter = structlog.stdlib.ProcessorFormatter(
         foreign_pre_chain=shared_processors,
-        processors=[
-            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-            renderer,
-        ],
+        processors=formatter_processors,
     )
 
     handler = logging.StreamHandler()
