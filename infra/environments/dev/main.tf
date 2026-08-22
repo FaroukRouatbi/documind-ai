@@ -19,6 +19,7 @@ module "iam" {
   environment          = var.environment
   documents_bucket_arn = module.s3.documents_bucket_arn
   db_secret_arn        = module.rds.db_secret_arn
+  migration_db_secret_arn = module.rds.migration_db_secret_arn
   sqs_queue_arn        = module.sqs.ingestion_queue_arn
   aws_region = var.aws_region
   documents_kms_key_arn = module.s3.documents_kms_key_arn
@@ -76,6 +77,7 @@ module "ecs" {
   # Runtime configuration for the containers
   documents_bucket_name       = module.s3.documents_bucket_name
   db_secret_arn               = module.rds.db_secret_arn
+  migration_db_secret_arn = module.rds.migration_db_secret_arn
   redis_endpoint              = module.elasticache.redis_endpoint
   sqs_queue_url               = module.sqs.queue_url
   cognito_user_pool_id        = module.cognito.user_pool_id

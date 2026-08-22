@@ -4,6 +4,12 @@ resource "random_password" "db" {
   override_special = "!#$%&*-_=+"
 }
 
+resource "random_password" "app" {
+  length           = 32
+  special          = true
+  override_special = "!#$%&*-_=+"
+}
+
 resource "aws_db_subnet_group" "db" {
   subnet_ids = var.private_subnet_ids
 
@@ -62,6 +68,29 @@ resource "aws_secretsmanager_secret" "db_credentials" {
 
 resource "aws_secretsmanager_secret_version" "db_credentials" {
   secret_id = aws_secretsmanager_secret.db_credentials.id
+
+  secret_string = jsonencode({
+    username = "documind_app"
+    password = random_password.app.result
+    host     = aws_db_instance.db.address
+    port     = aws_db_instance.db.port
+    dbname   = aws_db_instance.db.db_name
+  })
+}
+
+resource "aws_secretsmanager_secret" "migration_db_credentials" {
+  name        = "${var.environment}/documind-ai/migration-db-credentials"
+  description = "PostgreSQL MASTER/owner credentials for running Alembic migrations (DDL) — ${var.environment}"
+  recovery_window_in_days = 0
+
+  tags = {
+    Project     = "documind-ai"
+    Environment = var.environment
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "migration_db_credentials" {
+  secret_id = aws_secretsmanager_secret.migration_db_credentials.id
 
   secret_string = jsonencode({
     username = var.db_username

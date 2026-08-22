@@ -9,3 +9,7 @@ output "db_port" {
 output "db_secret_arn" {
   value = aws_secretsmanager_secret.db_credentials.arn
 }
+
+output "migration_db_secret_arn" {
+  value = aws_secretsmanager_secret.migration_db_credentials.arn
+}

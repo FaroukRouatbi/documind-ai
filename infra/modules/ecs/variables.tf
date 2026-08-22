@@ -42,6 +42,10 @@ variable "db_secret_arn" {
   type = string
 }
 
+variable "migration_db_secret_arn" {
+  type = string
+}
+
 variable "redis_endpoint" {
   type = string
 }

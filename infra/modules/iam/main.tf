@@ -41,7 +41,10 @@ data "aws_iam_policy_document" "execution_secrets_permissions" {
       "secretsmanager:GetSecretValue"
     ]
 
-    resources = [var.db_secret_arn]
+    resources = [
+      var.db_secret_arn,
+      var.migration_db_secret_arn
+    ]
   }
 }
 
