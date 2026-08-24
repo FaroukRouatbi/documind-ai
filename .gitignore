@@ -38,3 +38,11 @@ body.json
 backend/api/body.json
 backend/api/test.md
 scratch_*.py
+test*.md
+verify*.md
+
+infra/environments/dev/migration-network.json
+
+inspect-*.json
+migration-refresh.json
+rls-verify.md

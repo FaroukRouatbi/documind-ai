@@ -123,3 +123,14 @@ data "terraform_remote_state" "ecr" {
     region = "us-east-1"
   }
 }
+
+resource "local_file" "migration_network" {
+  filename = "${path.module}/migration-network.json"
+  content = jsonencode({
+    awsvpcConfiguration = {
+      subnets        = module.network.private_subnet_ids
+      securityGroups = [module.network.ecs_security_group_id]
+      assignPublicIp = "DISABLED"
+    }
+  })
+}
