@@ -42,6 +42,7 @@ def upgrade() -> None:
     ).scalar()
     conn.execute(text(alter_sql))
 
+    op.execute("GRANT CONNECT ON DATABASE documind TO documind_app;")
     op.execute("GRANT USAGE ON SCHEMA public TO documind_app;")
     op.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON documents, tenants, chunks TO documind_app;")
 
@@ -59,6 +60,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.execute("REVOKE SELECT, INSERT, UPDATE, DELETE ON documents, tenants, chunks FROM documind_app;")
     op.execute("REVOKE USAGE ON SCHEMA public FROM documind_app;")
+    op.execute("REVOKE CONNECT ON DATABASE documind FROM documind_app;")
 
     op.execute("""
         DO $$
