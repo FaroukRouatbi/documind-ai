@@ -44,8 +44,8 @@ async def get_tenant_db(
 ) -> AsyncGenerator[AsyncSession, None]:
     tenant_id = current_user["tenant_id"]
     await session.execute(
-    text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
-    {"tenant_id": tenant_id},
+        text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
+        {"tenant_id": tenant_id},
 )
     yield session
 
