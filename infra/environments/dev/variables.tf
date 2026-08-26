@@ -10,10 +10,10 @@ variable "aws_region" {
 
 variable "api_image_tag" {
   type    = string
-  default = "v5"
+  default = "v11"
 }
 
 variable "worker_image_tag" {
   type    = string
-  default = "v1"
+  default = "v10"
 }
