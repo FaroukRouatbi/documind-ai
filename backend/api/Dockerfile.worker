@@ -1,17 +1,21 @@
 FROM python:3.14-slim
 
-# Don't buffer stdout/stderr — logs appear immediately in CloudWatch
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /uvx /bin/
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
 
 COPY app/ ./app/
 
-# Run as a non-root user
+ENV PATH="/app/.venv/bin:$PATH"
+
 RUN useradd --create-home --uid 1000 appuser
 USER appuser
 
