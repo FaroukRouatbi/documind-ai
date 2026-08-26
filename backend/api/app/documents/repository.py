@@ -2,7 +2,7 @@ import uuid
 
 from dataclasses import dataclass
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.documents.models import Document
 
@@ -55,14 +55,15 @@ class DocumentRepository:
 
         return PaginatedDocuments(documents=documents, total=total)
 
-    async def update_status(self, document_id: uuid.UUID, status: str) -> Document | None:
-        document = await self.get_by_id(document_id)
-        if document is None:
-            return None
-
-        document.status = status
+    async def update_status(self, document_id: uuid.UUID, status: str) -> bool:
+        stmt = (
+            update(Document)
+            .where(Document.id == document_id)
+            .values(status=status)
+        )
+        result  = await self.session.execute(stmt)
         await self.session.flush()
-        return document
+        return result.rowcount > 0
 
     async def delete(self, document_id: uuid.UUID) -> bool:
         document = await self.get_by_id(document_id)
