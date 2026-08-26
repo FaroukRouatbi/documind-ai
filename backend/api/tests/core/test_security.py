@@ -85,7 +85,6 @@ async def test_verify_token_wrong_token_use(patch_signing_key, rsa_keypair):
 
 async def test_verify_token_missing_tenant_id(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
-    token = make_token(private_key)
 
     token = make_token(private_key, **{"custom:tenant_id": None})
     with pytest.raises(HTTPException) as exc_info:
@@ -102,4 +101,9 @@ async def test_verify_token_unknown_kid(monkeypatch, rsa_keypair):
     token = make_token(private_key)
     with pytest.raises(HTTPException) as exc_info:
         await security.verify_token(token)
+    assert exc_info.value.status_code == 401
+
+async def test_verify_token_malformed():
+    with pytest.raises(HTTPException) as exc_info:
+        await security.verify_token("not-a-real-token")
     assert exc_info.value.status_code == 401

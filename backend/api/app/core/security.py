@@ -46,8 +46,11 @@ async def get_signing_key(kid: str):
 security = HTTPBearer()
 
 async def verify_token(token: str) -> dict:
-    unverified_header = jwt.get_unverified_header(token)
-    kid = unverified_header["kid"]
+    try:
+        unverified_header = jwt.get_unverified_header(token)
+        kid = unverified_header["kid"]
+    except (jwt.PyJWTError, KeyError):
+        raise HTTPException(status_code=401, detail="Invalid token")
 
     try:
         jwk_dict = await get_signing_key(kid)
@@ -68,7 +71,7 @@ async def verify_token(token: str) -> dict:
             issuer=f"https://cognito-idp.{settings.aws_region}.amazonaws.com/{settings.cognito_user_pool_id}",
         )
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail=f"Invalid or expired token")
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
     
     if payload.get("token_use") != "id":
         raise HTTPException(status_code=401, detail="Invalid token: expected ID token")
