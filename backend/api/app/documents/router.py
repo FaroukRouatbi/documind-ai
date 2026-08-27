@@ -6,10 +6,15 @@ from structlog.contextvars import get_contextvars
 
 from app.core.config import API_V1_PREFIX
 from app.core.database import get_tenant_db
-from app.documents.repository import DocumentRepository
-from app.documents.schemas import DocumentResponse, PaginatedDocumentsResponse, UploadRequest, UploadResponse
 from app.core.security import get_current_user
+from app.documents.repository import DocumentRepository
 from app.documents.s3 import generate_upload_post
+from app.documents.schemas import (
+    DocumentResponse,
+    PaginatedDocumentsResponse,
+    UploadRequest,
+    UploadResponse,
+)
 
 router = APIRouter(prefix=API_V1_PREFIX, tags=["documents"])
 
@@ -40,7 +45,7 @@ async def create_upload(
         current_user: dict = Depends(get_current_user),
         session: AsyncSession = Depends(get_tenant_db),
 ):
-    
+
     """
     Creates a document record and returns a presigned S3 POST for the client
     to upload the file directly, bypassing the API server.

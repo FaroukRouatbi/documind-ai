@@ -2,9 +2,11 @@ import asyncio
 
 import boto3
 import pybreaker
-from app.core.config import settings
 from botocore.config import Config
 from botocore.exceptions import ClientError
+
+from app.core.config import settings
+
 
 def generate_upload_post(s3_key: str, content_type: str, max_size_bytes: int = 50_000_000) -> dict:
     client = boto3.client(

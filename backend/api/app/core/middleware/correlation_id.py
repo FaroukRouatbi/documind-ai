@@ -1,6 +1,8 @@
 import uuid
+
 import structlog
 from starlette.middleware.base import BaseHTTPMiddleware
+
 
 class CorrelationIdMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):

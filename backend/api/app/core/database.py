@@ -1,15 +1,15 @@
 import uuid
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 from fastapi import Depends
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
-from app.core.config import settings
-from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from contextlib import asynccontextmanager
 
-
+from app.core.config import settings
 from app.core.security import get_current_user
+
 
 class Base(DeclarativeBase):
     pass
@@ -29,7 +29,7 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False
 )
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession]:
     async with async_session_maker() as session:
         try:
             yield session
@@ -41,7 +41,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def get_tenant_db(
         session: AsyncSession = Depends(get_db),
         current_user: dict = Depends(get_current_user),
-) -> AsyncGenerator[AsyncSession, None]:
+) -> AsyncGenerator[AsyncSession]:
     tenant_id = current_user["tenant_id"]
     await session.execute(
         text("SELECT set_config('app.tenant_id', :tenant_id, true)"),
@@ -50,7 +50,7 @@ async def get_tenant_db(
     yield session
 
 @asynccontextmanager
-async def get_worker_session(tenant_id: uuid.UUID) -> AsyncGenerator[AsyncSession, None]:
+async def get_worker_session(tenant_id: uuid.UUID) -> AsyncGenerator[AsyncSession]:
     async with async_session_maker() as session:
         try:
             await session.execute(

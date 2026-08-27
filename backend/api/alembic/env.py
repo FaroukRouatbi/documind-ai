@@ -2,16 +2,11 @@ import asyncio
 from logging.config import fileConfig
 
 from sqlalchemy import pool
-
-from alembic import context
-
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.core.database import Base
-
+from alembic import context
 from app.core.config import settings
-
-import app.models_registry
+from app.core.database import Base
 
 MIGRATION_DATABASE_URL = (
     f"postgresql+asyncpg://{settings.migration_db.username}:{settings.migration_db.password}"

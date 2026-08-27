@@ -1,10 +1,9 @@
-import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.chunks.models import Chunk
 from app.documents.models import Document
 from app.ingestion.schemas import ChunkData
-from app.chunks.models import Chunk
 
 
 class ChunkRepository:

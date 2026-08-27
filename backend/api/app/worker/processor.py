@@ -1,14 +1,14 @@
-import structlog
 import uuid
 
 import pybreaker
+import structlog
 
+from app.chunks.repository import ChunkRepository
 from app.core.database import get_worker_session
+from app.core.metrics import ingestion_metrics
 from app.documents.repository import DocumentRepository
 from app.documents.s3 import S3Client
 from app.ingestion.base import IngestionStrategy
-from app.chunks.repository import ChunkRepository
-from app.core.metrics import ingestion_metrics
 
 logger = structlog.get_logger()
 
@@ -34,7 +34,7 @@ async def process_upload(
         if document.tenant_id != tenant_id:
             logger.warning("tenant_mismatch", s3_key=s3_key, key_tenant_id=str(tenant_id), document_tenant=str(document.tenant_id),)
             return
-        
+
         structlog.contextvars.bind_contextvars(correlation_id=document.correlation_id)
 
         async with ingestion_metrics(strategy="text", correlation_id=document.correlation_id) as m:

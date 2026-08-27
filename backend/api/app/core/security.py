@@ -1,15 +1,13 @@
 import json
 
-from fastapi import Depends, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import httpx
 import jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jwt.algorithms import RSAAlgorithm
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 from app.core.config import settings
-
-from jwt.algorithms import RSAAlgorithm
-
-from tenacity import retry, stop_after_attempt, wait_exponential
 
 JWKS_URL = f"https://cognito-idp.{settings.aws_region}.amazonaws.com/{settings.cognito_user_pool_id}/.well-known/jwks.json"
 _jwks_cache: dict | None = None
@@ -33,14 +31,14 @@ async def get_signing_key(kid: str):
     for key in jwks.get("keys", []):
         if key.get("kid") == kid:
             return key
-    
+
     global _jwks_cache
     _jwks_cache = None
     jwks = await get_jwks()
     for key in jwks.get("keys", []):
         if key.get("kid") == kid:
             return key
-        
+
     return None
 
 security = HTTPBearer()
@@ -59,7 +57,7 @@ async def verify_token(token: str) -> dict:
 
     if jwk_dict is None:
         raise HTTPException(status_code=401, detail="Invalid token: unknown signing key")
-    
+
     public_key = RSAAlgorithm.from_jwk(json.dumps(jwk_dict))
 
     try:
@@ -72,14 +70,14 @@ async def verify_token(token: str) -> dict:
         )
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
-    
+
     if payload.get("token_use") != "id":
         raise HTTPException(status_code=401, detail="Invalid token: expected ID token")
-    
+
     tenant_id = payload.get("custom:tenant_id")
     if tenant_id is None:
         raise HTTPException(status_code=401, detail="Token missing tenant_id claim")
-    
+
     return {
         "sub": payload["sub"],
         "tenant_id": tenant_id,
@@ -92,4 +90,3 @@ async def get_current_user(
 
     return await verify_token(token)
 
-    

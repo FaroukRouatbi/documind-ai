@@ -1,5 +1,7 @@
 from sqlalchemy import text
+
 from app.core.config import settings
+
 
 async def test_app_role_has_least_privilege_attributes(owner_sessionmaker):
     async with owner_sessionmaker() as session:
@@ -33,4 +35,3 @@ async def test_app_role_not_own_rls_tables(owner_sessionmaker):
     assert "chunks" in owners
     assert owners["documents"] != settings.db.username
     assert owners["chunks"] != settings.db.username
-        

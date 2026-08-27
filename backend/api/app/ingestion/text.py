@@ -1,11 +1,11 @@
-from dataclasses import replace
 import asyncio
+from dataclasses import replace
 
-from app.ingestion.base import IngestionStrategy
-from app.ingestion.schemas import ChunkData
-from app.ingestion.chunking import chunk_document
 from app.core.bedrock import BedrockEmbeddingClient
 from app.documents.models import Document
+from app.ingestion.base import IngestionStrategy
+from app.ingestion.chunking import chunk_document
+from app.ingestion.schemas import ChunkData
 
 
 class TextIngestionStrategy(IngestionStrategy):
@@ -35,6 +35,7 @@ class TextIngestionStrategy(IngestionStrategy):
 
 if __name__ == "__main__":
     import asyncio
+
     from app.documents.models import Document
 
     class FakeEmbedder:

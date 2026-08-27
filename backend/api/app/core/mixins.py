@@ -1,8 +1,10 @@
 import uuid
-from sqlalchemy import Uuid
 from datetime import datetime
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+from sqlalchemy import Uuid
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
+
 
 class TimestampMixin:
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
@@ -13,7 +15,7 @@ class TimestampMixin:
 
 class UUIDPrimaryKeyMixin:
     id: Mapped[uuid.UUID] = mapped_column(
-        Uuid, 
-        primary_key=True, 
+        Uuid,
+        primary_key=True,
         default=uuid.uuid4
     )

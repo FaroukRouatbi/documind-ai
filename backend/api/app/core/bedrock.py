@@ -1,10 +1,10 @@
-import json
 import asyncio
+import json
 
 import boto3
 import pybreaker
-from botocore.exceptions import ClientError
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 TRANSIENT_ERROR_CODES = {
     "ThrottlingException",

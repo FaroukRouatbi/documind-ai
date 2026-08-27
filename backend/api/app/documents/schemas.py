@@ -1,5 +1,7 @@
 import uuid
+
 from pydantic import BaseModel, Field, field_validator
+
 
 class DocumentResponse(BaseModel):
     id: uuid.UUID

@@ -1,7 +1,6 @@
-from markdown_it import MarkdownIt
-
 import pysbd
 import tiktoken
+from markdown_it import MarkdownIt
 
 from app.ingestion.schemas import ChunkData
 

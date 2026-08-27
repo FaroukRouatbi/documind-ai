@@ -1,15 +1,13 @@
 from contextlib import asynccontextmanager
 
-import pytest
 import pytest_asyncio
-
 from sqlalchemy import NullPool, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from app.core.config import settings
-from app.core.config import DBCredentials
-from app.tenants.models import Tenant
+from app.core.config import DBCredentials, settings
 from app.documents.models import Document
+from app.tenants.models import Tenant
+
 
 def _url(creds: DBCredentials) -> str:
     return (

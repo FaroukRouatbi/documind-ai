@@ -1,21 +1,17 @@
 import asyncio
 import json
-import structlog
 import urllib.parse
 
 import boto3
 import pybreaker
+import structlog
 
-from app.documents.s3 import S3Client
 from app.core.config import settings
-from app.core.bedrock import BedrockEmbeddingClient
-from app.ingestion.text import TextIngestionStrategy
-from app.worker.processor import process_upload
 from app.core.fake_embedder import FakeEmbedder
 from app.core.logging import configure_logging
-
-import app.models_registry
-
+from app.documents.s3 import S3Client
+from app.ingestion.text import TextIngestionStrategy
+from app.worker.processor import process_upload
 
 logger = structlog.get_logger()
 
@@ -38,7 +34,7 @@ async def run() -> None:
     configure_logging()
     s3_client = S3Client(settings.aws_region)
     ##embedder = BedrockEmbeddingClient(settings.aws_region)
-    embedder = FakeEmbedder() 
+    embedder = FakeEmbedder()
     strategy = TextIngestionStrategy(embedder)
     sqs = boto3.client("sqs", region_name=settings.aws_region)
 

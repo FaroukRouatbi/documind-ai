@@ -1,9 +1,9 @@
 import logging
 
 import structlog
-from app.core.config import settings
-
 from structlog.tracebacks import ExceptionDictTransformer
+
+from app.core.config import settings
 
 
 def get_shared_processors() -> list:

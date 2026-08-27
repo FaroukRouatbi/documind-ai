@@ -1,10 +1,11 @@
 import uuid
-
 from dataclasses import dataclass
 
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.documents.models import Document
+
 
 @dataclass
 class PaginatedDocuments:
@@ -80,4 +81,3 @@ class DocumentRepository:
         )
         return result.scalar_one_or_none()
 
-    

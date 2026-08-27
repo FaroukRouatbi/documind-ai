@@ -2,6 +2,7 @@ import time
 
 from aws_embedded_metrics.logger.metrics_logger_factory import create_metrics_logger
 
+
 class IngestionMetrics:
     def __init__(self, *, strategy: str, correlation_id: str | None):
         self._strategy = strategy
