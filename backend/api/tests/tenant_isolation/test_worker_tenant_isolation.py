@@ -3,7 +3,7 @@ from tests.tenant_isolation.conftest import tenant_session
 
 
 async def test_worker_scoped_to_b_cannot_fetch_a_document_by_s3_key(
-        app_sessionmaker, seeded_tenants
+    app_sessionmaker, seeded_tenants
 ):
     async with tenant_session(app_sessionmaker, seeded_tenants["tenant_b"]) as session:
         repo = DocumentRepository(session)

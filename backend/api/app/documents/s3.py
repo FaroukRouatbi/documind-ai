@@ -10,9 +10,7 @@ from app.core.config import settings
 
 def generate_upload_post(s3_key: str, content_type: str, max_size_bytes: int = 50_000_000) -> dict:
     client = boto3.client(
-        "s3",
-        region_name=settings.aws_region,
-        config=Config(signature_version="s3v4")
+        "s3", region_name=settings.aws_region, config=Config(signature_version="s3v4")
     )
     return client.generate_presigned_post(
         Bucket=settings.documents_bucket_name,
@@ -25,6 +23,7 @@ def generate_upload_post(s3_key: str, content_type: str, max_size_bytes: int = 5
         ExpiresIn=300,
     )
 
+
 S3_TRANSIENT_ERROR_CODES = {
     "SlowDown",
     "InternalError",
@@ -34,13 +33,16 @@ S3_TRANSIENT_ERROR_CODES = {
     "PriorRequestNotComplete",
 }
 
+
 def _is_transient_s3(exc: Exception) -> bool:
     if isinstance(exc, ClientError):
         return exc.response["Error"]["Code"] in S3_TRANSIENT_ERROR_CODES
     return False
 
+
 def _is_permanent_s3(exc: Exception) -> bool:
     return not _is_transient_s3(exc)
+
 
 class S3Client:
     def __init__(self, region: str):
@@ -55,7 +57,7 @@ class S3Client:
             exclude=[_is_permanent_s3],
         )
 
-    async def download(self, bucket: str,key: str) -> bytes:
+    async def download(self, bucket: str, key: str) -> bytes:
         return await asyncio.to_thread(self._download_guarded, bucket, key)
 
     def _download_guarded(self, bucket: str, key: str) -> bytes:
@@ -65,10 +67,12 @@ class S3Client:
         response = self._client.get_object(Bucket=bucket, Key=key)
         return response["Body"].read()
 
+
 if __name__ == "__main__":
+
     def make_error(code):
         return ClientError({"Error": {"Code": code, "Message": "x"}}, "GetObject")
 
-    print(_is_transient_s3(make_error("SlowDown")))     # True
-    print(_is_transient_s3(make_error("NoSuchKey")))    # False
-    print(_is_permanent_s3(make_error("NoSuchKey")))    # True
+    print(_is_transient_s3(make_error("SlowDown")))  # True
+    print(_is_transient_s3(make_error("NoSuchKey")))  # False
+    print(_is_permanent_s3(make_error("NoSuchKey")))  # True

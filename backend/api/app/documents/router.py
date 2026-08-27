@@ -18,14 +18,16 @@ from app.documents.schemas import (
 
 router = APIRouter(prefix=API_V1_PREFIX, tags=["documents"])
 
-@router.get("/documents",
-            response_model=PaginatedDocumentsResponse,
-            summary="List documents for the current tenant",
+
+@router.get(
+    "/documents",
+    response_model=PaginatedDocumentsResponse,
+    summary="List documents for the current tenant",
 )
 async def list_documents(
     limit: int = 20,
     offset: int = 0,
-    session : AsyncSession = Depends(get_tenant_db),
+    session: AsyncSession = Depends(get_tenant_db),
 ):
     """
     Returns a paginated list of documents belonging to the authenticated
@@ -39,13 +41,15 @@ async def list_documents(
         "total": result.total,
     }
 
-@router.post("/documents/upload", response_model=UploadResponse, summary="Get a presigned upload URL")
-async def create_upload(
-        request: UploadRequest,
-        current_user: dict = Depends(get_current_user),
-        session: AsyncSession = Depends(get_tenant_db),
-):
 
+@router.post(
+    "/documents/upload", response_model=UploadResponse, summary="Get a presigned upload URL"
+)
+async def create_upload(
+    request: UploadRequest,
+    current_user: dict = Depends(get_current_user),
+    session: AsyncSession = Depends(get_tenant_db),
+):
     """
     Creates a document record and returns a presigned S3 POST for the client
     to upload the file directly, bypassing the API server.

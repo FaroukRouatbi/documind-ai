@@ -14,7 +14,6 @@ MIGRATION_DATABASE_URL = (
 )
 
 
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -35,10 +34,9 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
 def do_run_migrations(connection):
-    context.configure(
-        connection=connection, target_metadata=target_metadata
-    )
+    context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
         context.run_migrations()
@@ -75,10 +73,7 @@ async def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_async_engine(
-        MIGRATION_DATABASE_URL,
-        poolclass=pool.NullPool
-    )
+    connectable = create_async_engine(MIGRATION_DATABASE_URL, poolclass=pool.NullPool)
 
     try:
         async with connectable.connect() as connection:

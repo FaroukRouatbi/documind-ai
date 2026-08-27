@@ -10,9 +10,11 @@ class DocumentResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+
 class PaginatedDocumentsResponse(BaseModel):
     documents: list[DocumentResponse]
     total: int
+
 
 class UploadRequest(BaseModel):
     filename: str = Field(min_length=1, max_length=255)
@@ -30,6 +32,7 @@ class UploadRequest(BaseModel):
         if any(ord(c) < 32 for c in v):
             raise ValueError("filename must not contain control characters")
         return v
+
 
 class UploadResponse(BaseModel):
     document_id: uuid.UUID

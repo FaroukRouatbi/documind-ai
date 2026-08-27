@@ -12,6 +12,7 @@ class PaginatedDocuments:
     documents: list[Document]
     total: int
 
+
 class DocumentRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -39,16 +40,12 @@ class DocumentRepository:
         return document
 
     async def get_by_id(self, document_id: uuid.UUID) -> Document | None:
-        result = await self.session.execute(
-            select(Document).where(Document.id == document_id)
-        )
+        result = await self.session.execute(select(Document).where(Document.id == document_id))
 
         return result.scalar_one_or_none()
 
     async def list_for_tenant(self, limit: int = 20, offset: int = 0) -> PaginatedDocuments:
-        result = await self.session.execute(
-            select(Document).limit(limit).offset(offset)
-        )
+        result = await self.session.execute(select(Document).limit(limit).offset(offset))
         documents = list(result.scalars().all())
 
         count_result = await self.session.execute(select(func.count()).select_from(Document))
@@ -57,12 +54,8 @@ class DocumentRepository:
         return PaginatedDocuments(documents=documents, total=total)
 
     async def update_status(self, document_id: uuid.UUID, status: str) -> bool:
-        stmt = (
-            update(Document)
-            .where(Document.id == document_id)
-            .values(status=status)
-        )
-        result  = await self.session.execute(stmt)
+        stmt = update(Document).where(Document.id == document_id).values(status=status)
+        result = await self.session.execute(stmt)
         await self.session.flush()
         return result.rowcount > 0
 
@@ -76,8 +69,5 @@ class DocumentRepository:
         return True
 
     async def get_by_s3_key(self, s3_key: str) -> Document | None:
-        result = await self.session.execute(
-            select(Document).where(Document.s3_key == s3_key)
-        )
+        result = await self.session.execute(select(Document).where(Document.s3_key == s3_key))
         return result.scalar_one_or_none()
-

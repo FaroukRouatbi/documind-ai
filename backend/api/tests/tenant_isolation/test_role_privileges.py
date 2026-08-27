@@ -6,10 +6,7 @@ from app.core.config import settings
 async def test_app_role_has_least_privilege_attributes(owner_sessionmaker):
     async with owner_sessionmaker() as session:
         result = await session.execute(
-            text(
-                "SELECT rolcanlogin, rolbypassrls, rolsuper "
-                "FROM pg_roles WHERE rolname = :role"
-            ),
+            text("SELECT rolcanlogin, rolbypassrls, rolsuper FROM pg_roles WHERE rolname = :role"),
             {"role": settings.db.username},
         )
         row = result.mappings().first()
@@ -18,6 +15,7 @@ async def test_app_role_has_least_privilege_attributes(owner_sessionmaker):
     assert row["rolcanlogin"] is True
     assert row["rolbypassrls"] is False
     assert row["rolsuper"] is False
+
 
 async def test_app_role_not_own_rls_tables(owner_sessionmaker):
     async with owner_sessionmaker() as session:

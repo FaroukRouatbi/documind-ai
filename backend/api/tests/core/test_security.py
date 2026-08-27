@@ -25,6 +25,7 @@ def signing_jwk(rsa_keypair):
     jwk["kid"] = "test-kid"
     return jwk
 
+
 @pytest.fixture
 def patch_signing_key(monkeypatch, signing_jwk):
     async def fake_get_signing_key(kid):
@@ -32,26 +33,29 @@ def patch_signing_key(monkeypatch, signing_jwk):
 
     monkeypatch.setattr(security, "get_signing_key", fake_get_signing_key)
 
+
 def make_token(private_key, **overrides):
     claims = {
         "sub": "test-user-id",
         "custom:tenant_id": "test-tenant-id",
-        "token_use" : "id",
-        "aud" : settings.cognito_user_pool_client_id,
-        "iss" : f"https://cognito-idp.{settings.aws_region}.amazonaws.com/{settings.cognito_user_pool_id}",
-        "exp" : int(time.time()) + 3600,
-        "iat" : int(time.time())
+        "token_use": "id",
+        "aud": settings.cognito_user_pool_client_id,
+        "iss": f"https://cognito-idp.{settings.aws_region}.amazonaws.com/{settings.cognito_user_pool_id}",
+        "exp": int(time.time()) + 3600,
+        "iat": int(time.time()),
     }
     claims.update(overrides)
     token = jwt.encode(claims, private_key, algorithm="RS256", headers={"kid": "test-kid"})
 
     return token
 
+
 async def test_verify_token_success(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
     token = make_token(private_key)
     result = await security.verify_token(token)
     assert result == {"sub": "test-user-id", "tenant_id": "test-tenant-id"}
+
 
 async def test_verify_token_expired(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
@@ -60,12 +64,14 @@ async def test_verify_token_expired(patch_signing_key, rsa_keypair):
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
 
+
 async def test_verify_token_wrong_audience(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
     token = make_token(private_key, aud="wrong-client-id")
     with pytest.raises(HTTPException) as exc_info:
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
+
 
 async def test_verify_token_wrong_issuer(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
@@ -74,12 +80,14 @@ async def test_verify_token_wrong_issuer(patch_signing_key, rsa_keypair):
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
 
+
 async def test_verify_token_wrong_token_use(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
     token = make_token(private_key, token_use="access")
     with pytest.raises(HTTPException) as exc_info:
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
+
 
 async def test_verify_token_missing_tenant_id(patch_signing_key, rsa_keypair):
     private_key, _ = rsa_keypair
@@ -88,6 +96,7 @@ async def test_verify_token_missing_tenant_id(patch_signing_key, rsa_keypair):
     with pytest.raises(HTTPException) as exc_info:
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
+
 
 async def test_verify_token_unknown_kid(monkeypatch, rsa_keypair):
     private_key, _ = rsa_keypair
@@ -100,6 +109,7 @@ async def test_verify_token_unknown_kid(monkeypatch, rsa_keypair):
     with pytest.raises(HTTPException) as exc_info:
         await security.verify_token(token)
     assert exc_info.value.status_code == 401
+
 
 async def test_verify_token_malformed():
     with pytest.raises(HTTPException) as exc_info:

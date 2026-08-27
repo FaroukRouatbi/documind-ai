@@ -10,14 +10,15 @@ from app.documents.router import router as doc_router
 def create_app() -> FastAPI:
     configure_logging()
 
-    app = FastAPI(title="DocuMind AI API",
-                  description=(
-                    "Multi-tenant RAG document Q&A platform API. "
-                    "All endpoints under /v1 require a Bearer ID token issued by Cognito; "
-                    "requests are automatically scoped to the authenticated user's tenant "
-                    "via row-level security."
-    ),
-                  version="1.0.0",
+    app = FastAPI(
+        title="DocuMind AI API",
+        description=(
+            "Multi-tenant RAG document Q&A platform API. "
+            "All endpoints under /v1 require a Bearer ID token issued by Cognito; "
+            "requests are automatically scoped to the authenticated user's tenant "
+            "via row-level security."
+        ),
+        version="1.0.0",
     )
 
     app.add_middleware(CorrelationIdMiddleware)

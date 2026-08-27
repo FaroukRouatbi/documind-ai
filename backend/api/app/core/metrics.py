@@ -38,5 +38,6 @@ class IngestionMetrics:
         await self._logger.flush()
         return False
 
+
 def ingestion_metrics(*, strategy: str, correlation_id: str | None) -> IngestionMetrics:
     return IngestionMetrics(strategy=strategy, correlation_id=correlation_id)

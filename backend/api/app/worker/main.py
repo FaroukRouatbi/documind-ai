@@ -15,6 +15,7 @@ from app.worker.processor import process_upload
 
 logger = structlog.get_logger()
 
+
 async def handle_message(message, *, s3_client, strategy) -> None:
     structlog.contextvars.clear_contextvars()
     body = json.loads(message["Body"])
@@ -30,6 +31,7 @@ async def handle_message(message, *, s3_client, strategy) -> None:
         logger.info("processing_record")
         await process_upload(bucket, key, s3_client=s3_client, strategy=strategy)
 
+
 async def run() -> None:
     configure_logging()
     s3_client = S3Client(settings.aws_region)
@@ -38,7 +40,9 @@ async def run() -> None:
     strategy = TextIngestionStrategy(embedder)
     sqs = boto3.client("sqs", region_name=settings.aws_region)
 
-    logger.info("worker_started", queue_url=settings.sqs_queue_url, embedder=type(embedder).__name__)
+    logger.info(
+        "worker_started", queue_url=settings.sqs_queue_url, embedder=type(embedder).__name__
+    )
 
     while True:
         try:
@@ -77,6 +81,7 @@ async def run() -> None:
             except Exception:
                 logger.exception("unexpected_message_error")
                 continue
+
 
 if __name__ == "__main__":
     asyncio.run(run())

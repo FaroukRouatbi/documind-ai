@@ -22,9 +22,7 @@ class TextIngestionStrategy(IngestionStrategy):
             embedding_version=self._embedder.embedding_version,
         )
 
-        embedded = await asyncio.gather(
-            *(self._embed_chunk(chunk) for chunk in chunks)
-        )
+        embedded = await asyncio.gather(*(self._embed_chunk(chunk) for chunk in chunks))
 
         return list(embedded)
 
@@ -32,6 +30,7 @@ class TextIngestionStrategy(IngestionStrategy):
         async with self._semaphore:
             vector = await self._embedder.embed(chunk.content)
         return replace(chunk, embedding=vector)
+
 
 if __name__ == "__main__":
     import asyncio
@@ -41,6 +40,7 @@ if __name__ == "__main__":
     class FakeEmbedder:
         model_id = "fake-model"
         embedding_version = 1
+
         async def embed(self, text: str) -> list[float]:
             return [0.0] * 1024
 
@@ -49,6 +49,8 @@ if __name__ == "__main__":
         sample = "# Title\n\nSome content here.\n\n## Section\n\nMore content."
         chunks = await strategy.process(Document(), sample.encode("utf-8"))
         for c in chunks:
-            print(f"[{c.chunk_index}] path={c.heading_path!r} embedded={c.embedding is not None} model={c.embedding_model}")
+            print(
+                f"[{c.chunk_index}] path={c.heading_path!r} embedded={c.embedding is not None} model={c.embedding_model}" # noqa: E501
+            )
 
     asyncio.run(main())

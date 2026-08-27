@@ -5,13 +5,14 @@ Revises: de24c55430b0
 Create Date: 2026-08-05 02:53:19.618757
 
 """
+
 from collections.abc import Sequence
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '9352792701d3'
-down_revision: str | Sequence[str] | None = 'de24c55430b0'
+revision: str = "9352792701d3"
+down_revision: str | Sequence[str] | None = "de24c55430b0"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

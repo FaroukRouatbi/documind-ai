@@ -1,4 +1,3 @@
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.chunks.models import Chunk
@@ -11,11 +10,11 @@ class ChunkRepository:
         self.session = session
 
     async def bulk_create(
-            self,
-            chunks: list[ChunkData],
-            *,
-            document: Document,
-            ingestion_strategy: str,
+        self,
+        chunks: list[ChunkData],
+        *,
+        document: Document,
+        ingestion_strategy: str,
     ) -> list[Chunk]:
         orm_chunks = [
             Chunk(
@@ -37,7 +36,7 @@ class ChunkRepository:
         self.session.add_all(orm_chunks)
         await self.session.flush()
 
-        for orm_chunk, data in zip(orm_chunks, chunks):
+        for orm_chunk, data in zip(orm_chunks, chunks, strict=True):
             if data.parent_index is not None:
                 orm_chunk.parent_chunk_id = orm_chunks[data.parent_index].id
 

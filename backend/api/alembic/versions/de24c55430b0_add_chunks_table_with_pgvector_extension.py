@@ -5,6 +5,7 @@ Revises: 48b31c4348bd
 Create Date: 2026-08-05 02:29:53.387459
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
@@ -13,8 +14,8 @@ from pgvector.sqlalchemy import Vector
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'de24c55430b0'
-down_revision: str | Sequence[str] | None = '48b31c4348bd'
+revision: str = "de24c55430b0"
+down_revision: str | Sequence[str] | None = "48b31c4348bd"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -30,7 +31,9 @@ def upgrade() -> None:
         sa.Column("content", sa.String(), nullable=False),
         sa.Column("embedding", Vector(1024), nullable=False),
         sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.func.now(), onupdate=sa.func.now()),
+        sa.Column(
+            "updated_at", sa.DateTime(), server_default=sa.func.now(), onupdate=sa.func.now()
+        ),
     )
 
 

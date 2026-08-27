@@ -6,5 +6,4 @@ from app.ingestion.schemas import ChunkData
 
 class IngestionStrategy(ABC):
     @abstractmethod
-    async def process(self, document: Document, file_bytes: bytes) -> list[ChunkData]:
-        ...
+    async def process(self, document: Document, file_bytes: bytes) -> list[ChunkData]: ...

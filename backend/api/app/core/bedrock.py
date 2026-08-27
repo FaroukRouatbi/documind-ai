@@ -47,7 +47,6 @@ class BedrockEmbeddingClient:
             exclude=[_is_permanent],
         )
 
-
     async def embed(self, text: str) -> list[float]:
         return await asyncio.to_thread(self._embed_guarded, text)
 
@@ -55,11 +54,13 @@ class BedrockEmbeddingClient:
         return self._breaker.call(self._embed_sync, text)
 
     def _embed_sync(self, text: str) -> list[float]:
-        body = json.dumps({
-            "inputText": text,
-            "dimensions": self._dimensions,
-            "normalize": True,
-        })
+        body = json.dumps(
+            {
+                "inputText": text,
+                "dimensions": self._dimensions,
+                "normalize": True,
+            }
+        )
         response = self._client.invoke_model(modelId=self._model_id, body=body)
         payload = json.loads(response["body"].read())
         return payload["embedding"]
@@ -72,7 +73,9 @@ class BedrockEmbeddingClient:
     def embedding_version(self) -> int:
         return self._embedding_version
 
+
 if __name__ == "__main__":
+
     def make_error(code):
         return ClientError({"Error": {"Code": code, "Message": "x"}}, "InvokeModel")
 
@@ -82,8 +85,10 @@ if __name__ == "__main__":
 
     # breaker trip test
     br = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[_is_permanent])
+
     def always_throttle():
         raise make_error("ThrottlingException")
+
     for i in range(5):
         try:
             br.call(always_throttle)

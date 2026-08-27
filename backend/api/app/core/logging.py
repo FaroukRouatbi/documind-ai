@@ -14,6 +14,7 @@ def get_shared_processors() -> list:
         structlog.processors.TimeStamper(fmt="iso"),
     ]
 
+
 def configure_logging() -> None:
     shared_processors = get_shared_processors()
 
@@ -22,9 +23,7 @@ def configure_logging() -> None:
         # exception processor runs on the RENDER side, only at final formatting
         formatter_processors = [
             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
-            structlog.processors.ExceptionRenderer(
-                ExceptionDictTransformer(show_locals=False)
-            ),
+            structlog.processors.ExceptionRenderer(ExceptionDictTransformer(show_locals=False)),
             renderer,
         ]
     else:
@@ -35,7 +34,8 @@ def configure_logging() -> None:
         ]
 
     structlog.configure(
-        processors=shared_processors + [
+        processors=shared_processors
+        + [
             structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),

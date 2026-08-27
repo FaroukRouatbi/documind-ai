@@ -10,6 +10,7 @@ segmenter = pysbd.Segmenter(language="en", clean=False)
 
 md = MarkdownIt()
 
+
 def parse_into_sections(markdown: str) -> list[tuple[str | None, str]]:
     lines = markdown.split("\n")
     tokens = md.parse(markdown)
@@ -20,7 +21,7 @@ def parse_into_sections(markdown: str) -> list[tuple[str | None, str]]:
 
     for i, token in enumerate(tokens):
         if token.type == "heading_open":
-            heading  = tokens[i+1].content
+            heading = tokens[i + 1].content
             section_lines = lines[content_start : token.map[0]]
             content = "\n".join(section_lines).strip()
             if content:
@@ -33,15 +34,17 @@ def parse_into_sections(markdown: str) -> list[tuple[str | None, str]]:
             content_start = token.map[1]
             current_path = " > ".join(stack)
 
-    final_lines = lines[content_start : ]
+    final_lines = lines[content_start:]
     content = "\n".join(final_lines).strip()
     if content:
         sections.append((current_path, content))
 
     return sections
 
+
 def count_tokens(text: str) -> int:
     return len(encoder.encode(text))
+
 
 def pack(units: list[str], budget: int, split_further, joiner: str) -> list[str]:
     chunks = []
@@ -72,10 +75,12 @@ def pack(units: list[str], budget: int, split_further, joiner: str) -> list[str]
 
     return chunks
 
+
 def split_into_sentences(text: str, budget: int = 500) -> list[str]:
     sentences = segmenter.segment(text)
 
     return pack(sentences, budget, lambda s: [s], joiner=" ")
+
 
 def split_section(content: str, budget: int = 500) -> list[str]:
     if count_tokens(content) <= budget:
@@ -84,7 +89,10 @@ def split_section(content: str, budget: int = 500) -> list[str]:
     paragraphs = content.split("\n\n")
     return pack(paragraphs, budget, lambda p: split_into_sentences(p, budget), joiner="\n\n")
 
-def chunk_document(markdown: str, *, embedding_model: str, embedding_version: int, budget: int = 500) -> list[ChunkData]:
+
+def chunk_document(
+    markdown: str, *, embedding_model: str, embedding_version: int, budget: int = 500
+) -> list[ChunkData]:
     sections = parse_into_sections(markdown)
     chunk_index = 0
     chunks = []
@@ -101,12 +109,13 @@ def chunk_document(markdown: str, *, embedding_model: str, embedding_version: in
                 embedding_version=embedding_version,
                 heading_path=heading_path,
                 token_count=count_tokens(piece),
-                parent_index=None
+                parent_index=None,
             )
             chunks.append(chunk)
             chunk_index += 1
 
     return chunks
+
 
 if __name__ == "__main__":
     sample = """Intro text before any heading.
@@ -135,5 +144,7 @@ Costs were flat.
         embedding_version=1,
     )
     for c in chunks:
-        print(f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}")
+        print(
+            f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}" # noqa: E501
+        )
         print(f"    content={c.content[:50]!r}")

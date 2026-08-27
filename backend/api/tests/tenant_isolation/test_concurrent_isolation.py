@@ -12,9 +12,8 @@ async def _read_visible_docs(sessionmaker, tenant_id):
         docs = result.scalars().all()
     return tenant_id, {doc.id for doc in docs}
 
-async def test_concurrent_tenant_contexts_do_not_leak(
-        app_sessionmaker_pooled, seeded_tenants
-):
+
+async def test_concurrent_tenant_contexts_do_not_leak(app_sessionmaker_pooled, seeded_tenants):
     tenant_a = seeded_tenants["tenant_a"]
     tenant_b = seeded_tenants["tenant_b"]
     doc_a = seeded_tenants["doc_a"]

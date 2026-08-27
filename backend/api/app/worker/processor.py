@@ -12,12 +12,13 @@ from app.ingestion.base import IngestionStrategy
 
 logger = structlog.get_logger()
 
+
 async def process_upload(
-        bucket: str,
-        s3_key: str,
-        *,
-        s3_client: S3Client,
-        strategy: IngestionStrategy,
+    bucket: str,
+    s3_key: str,
+    *,
+    s3_client: S3Client,
+    strategy: IngestionStrategy,
 ) -> None:
     tenant_id = uuid.UUID(s3_key.split("/")[0])
 
@@ -32,7 +33,12 @@ async def process_upload(
             return
 
         if document.tenant_id != tenant_id:
-            logger.warning("tenant_mismatch", s3_key=s3_key, key_tenant_id=str(tenant_id), document_tenant=str(document.tenant_id),)
+            logger.warning(
+                "tenant_mismatch",
+                s3_key=s3_key,
+                key_tenant_id=str(tenant_id),
+                document_tenant=str(document.tenant_id),
+            )
             return
 
         structlog.contextvars.bind_contextvars(correlation_id=document.correlation_id)
