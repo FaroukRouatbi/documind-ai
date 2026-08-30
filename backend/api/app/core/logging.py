@@ -27,7 +27,7 @@ def configure_logging() -> None:
             renderer,
         ]
     else:
-        renderer = structlog.dev.ConsoleRenderer()
+        renderer = structlog.dev.ConsoleRenderer()  # type: ignore[assignment]  # structlog renderers share no common base type
         formatter_processors = [
             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
             renderer,
@@ -44,7 +44,7 @@ def configure_logging() -> None:
 
     formatter = structlog.stdlib.ProcessorFormatter(
         foreign_pre_chain=shared_processors,
-        processors=formatter_processors,
+        processors=formatter_processors,   # type: ignore[arg-type]  # structlog processor typing is too strict
     )
 
     handler = logging.StreamHandler()

@@ -57,7 +57,7 @@ class DocumentRepository:
         stmt = update(Document).where(Document.id == document_id).values(status=status)
         result = await self.session.execute(stmt)
         await self.session.flush()
-        return result.rowcount > 0
+        return result.rowcount > 0  # type: ignore[attr-defined]  # rowcount exists on the underlying CursorResult
 
     async def delete(self, document_id: uuid.UUID) -> bool:
         document = await self.get_by_id(document_id)

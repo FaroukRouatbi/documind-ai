@@ -1,7 +1,9 @@
 import json
+from typing import cast
 
 import httpx
 import jwt
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.algorithms import RSAAlgorithm
@@ -62,7 +64,7 @@ async def verify_token(token: str) -> dict:
     if jwk_dict is None:
         raise HTTPException(status_code=401, detail="Invalid token: unknown signing key")
 
-    public_key = RSAAlgorithm.from_jwk(json.dumps(jwk_dict))
+    public_key = cast(RSAPublicKey, RSAAlgorithm.from_jwk(json.dumps(jwk_dict)))
 
     try:
         payload = jwt.decode(

@@ -1,7 +1,7 @@
 import asyncio
 from dataclasses import replace
 
-from app.core.bedrock import BedrockEmbeddingClient
+from app.core.embedder import Embedder
 from app.documents.models import Document
 from app.ingestion.base import IngestionStrategy
 from app.ingestion.chunking import chunk_document
@@ -9,7 +9,7 @@ from app.ingestion.schemas import ChunkData
 
 
 class TextIngestionStrategy(IngestionStrategy):
-    def __init__(self, embedder: BedrockEmbeddingClient, max_concurrency: int = 8):
+    def __init__(self, embedder: Embedder, max_concurrency: int = 8):
         self._embedder = embedder
         self._semaphore = asyncio.Semaphore(max_concurrency)
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     class FakeEmbedder:
         model_id = "fake-model"
-        embedding_version = 1
+        embedding_version = "1"
 
         async def embed(self, text: str) -> list[float]:
             return [0.0] * 1024

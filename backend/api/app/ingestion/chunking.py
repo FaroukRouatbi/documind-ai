@@ -14,14 +14,15 @@ md = MarkdownIt()
 def parse_into_sections(markdown: str) -> list[tuple[str | None, str]]:
     lines = markdown.split("\n")
     tokens = md.parse(markdown)
-    sections = []
-    stack = []
+    sections: list[tuple[str | None, str]] = []
+    stack: list[str] = []
     content_start = 0
     current_path = None
 
     for i, token in enumerate(tokens):
         if token.type == "heading_open":
             heading = tokens[i + 1].content
+            assert token.map is not None
             section_lines = lines[content_start : token.map[0]]
             content = "\n".join(section_lines).strip()
             if content:
@@ -48,7 +49,7 @@ def count_tokens(text: str) -> int:
 
 def pack(units: list[str], budget: int, split_further, joiner: str) -> list[str]:
     chunks = []
-    current = []
+    current: list[str] = []
     current_tokens = 0
 
     for unit in units:
@@ -91,7 +92,7 @@ def split_section(content: str, budget: int = 500) -> list[str]:
 
 
 def chunk_document(
-    markdown: str, *, embedding_model: str, embedding_version: int, budget: int = 500
+    markdown: str, *, embedding_model: str, embedding_version: str, budget: int = 500
 ) -> list[ChunkData]:
     sections = parse_into_sections(markdown)
     chunk_index = 0
@@ -141,7 +142,7 @@ Costs were flat.
     chunks = chunk_document(
         sample,
         embedding_model="amazon.titan-embed-text-v2:0",
-        embedding_version=1,
+        embedding_version="1",
     )
     for c in chunks:
         print(

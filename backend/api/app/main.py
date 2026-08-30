@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-import app.models_registry
+from app import models_registry  # noqa: F401
 from app.auth.router import router as auth_router
 from app.core.logging import configure_logging
 from app.core.middleware import CorrelationIdMiddleware, RequestSizeLimitMiddleware
