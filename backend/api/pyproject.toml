@@ -116,3 +116,13 @@ ignore_missing_imports = true
 check_untyped_defs = true
 
 plugins = ["pydantic.mypy"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "*/tests/*",
+    "*/__main__.py",
+]
+
+[tool.coverage.report]
+show_missing = true
