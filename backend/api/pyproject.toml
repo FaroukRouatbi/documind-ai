@@ -65,7 +65,7 @@ dependencies = [
     "typing-inspection==0.4.2",
     "tzdata==2026.3",
     "urllib3==2.7.0",
-    "uvicorn==0.51.0",
+    "uvicorn==0.52.4",
     "yarl==1.24.5",
 ]
 
