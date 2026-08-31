@@ -151,10 +151,10 @@ resource "aws_security_group" "ecs" {
 
   ingress {
     description     = "App traffic from ALB only"
-    from_port        = 8000
-    to_port          = 8000
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.alb.id]
+    from_port       = 8000
+    to_port         = 8000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
   }
 
   egress {
@@ -177,10 +177,10 @@ resource "aws_security_group" "rds" {
 
   ingress {
     description     = "Postgres from ECS only"
-    from_port        = 5432
-    to_port          = 5432
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.ecs.id]
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs.id]
   }
 
   egress {
@@ -203,10 +203,10 @@ resource "aws_security_group" "redis" {
 
   ingress {
     description     = "Redis from ECS only"
-    from_port        = 6379
-    to_port          = 6379
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.ecs.id]
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs.id]
   }
 
   egress {

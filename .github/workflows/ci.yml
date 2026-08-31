@@ -64,3 +64,27 @@ jobs:
 
       - name: Test
         run: uv run pytest --cov --cov-report=term-missing
+  
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.0"
+
+      - name: Terraform format check
+        run: terraform fmt -check -recursive
+        working-directory: infra
+
+      - name: Terraform validate
+        run: |
+          for dir in bootstrap environments/dev ecr; do
+            echo "Validating $dir"
+            terraform -chdir="$dir" init -backend=false
+            terraform -chdir="$dir" validate
+          done
+        working-directory: infra

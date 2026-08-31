@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "ingestion_dlq" {
-  name = "documind-ai-ingestion-dlq-${var.environment}"
+  name                    = "documind-ai-ingestion-dlq-${var.environment}"
   sqs_managed_sse_enabled = true
 
   tags = {
@@ -9,9 +9,9 @@ resource "aws_sqs_queue" "ingestion_dlq" {
 }
 
 resource "aws_sqs_queue" "ingestion" {
-  name = "documind-ai-ingestion-${var.environment}"
+  name                    = "documind-ai-ingestion-${var.environment}"
   sqs_managed_sse_enabled = true
-  
+
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.ingestion_dlq.arn
     maxReceiveCount     = 5
