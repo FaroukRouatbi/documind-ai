@@ -146,6 +146,6 @@ Costs were flat.
     )
     for c in chunks:
         print(
-            f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}" # noqa: E501
+            f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}"  # noqa: E501
         )
         print(f"    content={c.content[:50]!r}")

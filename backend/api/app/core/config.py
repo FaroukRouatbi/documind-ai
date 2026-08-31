@@ -27,12 +27,12 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    @computed_field   # type: ignore[prop-decorator]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def db(self) -> DBCredentials:
         return DBCredentials.model_validate_json(self.db_credentials)
 
-    @computed_field   # type: ignore[prop-decorator]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def migration_db(self) -> DBCredentials:
         if self.migration_db_credentials is None:

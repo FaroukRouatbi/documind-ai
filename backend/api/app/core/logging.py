@@ -44,7 +44,7 @@ def configure_logging() -> None:
 
     formatter = structlog.stdlib.ProcessorFormatter(
         foreign_pre_chain=shared_processors,
-        processors=formatter_processors,   # type: ignore[arg-type]  # structlog processor typing is too strict
+        processors=formatter_processors,  # type: ignore[arg-type]  # structlog processor typing is too strict
     )
 
     handler = logging.StreamHandler()

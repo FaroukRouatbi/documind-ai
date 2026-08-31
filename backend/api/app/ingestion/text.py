@@ -50,7 +50,7 @@ if __name__ == "__main__":
         chunks = await strategy.process(Document(), sample.encode("utf-8"))
         for c in chunks:
             print(
-                f"[{c.chunk_index}] path={c.heading_path!r} embedded={c.embedding is not None} model={c.embedding_model}" # noqa: E501
+                f"[{c.chunk_index}] path={c.heading_path!r} embedded={c.embedding is not None} model={c.embedding_model}"  # noqa: E501
             )
 
     asyncio.run(main())
