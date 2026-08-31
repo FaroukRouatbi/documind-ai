@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: documind
+          POSTGRES_PASSWORD: localdev
+          POSTGRES_DB: documind
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend/api
+
+    env:
+      DOCUMENTS_BUCKET_NAME: ci-dummy-bucket
+      REDIS_ENDPOINT: ci-dummy-redis
+      SQS_QUEUE_URL: ci-dummy-queue
+      DB_CREDENTIALS: '{"username":"documind_app","password":"local_dev_app_pw_2026","host":"localhost","port":5432,"dbname":"documind"}'
+      MIGRATION_DB_CREDENTIALS: '{"username":"documind","password":"localdev","host":"localhost","port":5432,"dbname":"documind"}'
+      DOCUMIND_APP_PASSWORD: local_dev_app_pw_2026
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.6"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Type check
+        run: uv run mypy
+
+      - name: Run migrations
+        run: uv run alembic upgrade head
+
+      - name: Test
+        run: uv run pytest
