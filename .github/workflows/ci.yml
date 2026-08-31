@@ -37,7 +37,7 @@ jobs:
       DOCUMIND_APP_PASSWORD: local_dev_app_pw_2026
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
