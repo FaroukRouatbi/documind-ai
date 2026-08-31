@@ -45,8 +45,8 @@ resource "aws_db_instance" "db" {
   vpc_security_group_ids = [var.rds_security_group_id]
 
   publicly_accessible = false
-  skip_final_snapshot  = true
-  storage_encrypted = true
+  skip_final_snapshot = true
+  storage_encrypted   = true
 
   tags = {
     Name        = "${var.environment}-documind-db"
@@ -56,8 +56,8 @@ resource "aws_db_instance" "db" {
 }
 
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name        = "${var.environment}/documind-ai/db-credentials"
-  description = "PostgreSQL credentials for the RAG application running on ECS Fargate (${var.environment} environment)"
+  name                    = "${var.environment}/documind-ai/db-credentials"
+  description             = "PostgreSQL credentials for the RAG application running on ECS Fargate (${var.environment} environment)"
   recovery_window_in_days = 0
 
   tags = {
@@ -79,8 +79,8 @@ resource "aws_secretsmanager_secret_version" "db_credentials" {
 }
 
 resource "aws_secretsmanager_secret" "migration_db_credentials" {
-  name        = "${var.environment}/documind-ai/migration-db-credentials"
-  description = "PostgreSQL MASTER/owner credentials for running Alembic migrations (DDL) — ${var.environment}"
+  name                    = "${var.environment}/documind-ai/migration-db-credentials"
+  description             = "PostgreSQL MASTER/owner credentials for running Alembic migrations (DDL) — ${var.environment}"
   recovery_window_in_days = 0
 
   tags = {

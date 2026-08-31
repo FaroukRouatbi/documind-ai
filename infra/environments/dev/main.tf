@@ -16,13 +16,13 @@ module "s3" {
 module "iam" {
   source = "../../modules/iam"
 
-  environment          = var.environment
-  documents_bucket_arn = module.s3.documents_bucket_arn
-  db_secret_arn        = module.rds.db_secret_arn
+  environment             = var.environment
+  documents_bucket_arn    = module.s3.documents_bucket_arn
+  db_secret_arn           = module.rds.db_secret_arn
   migration_db_secret_arn = module.rds.migration_db_secret_arn
-  sqs_queue_arn        = module.sqs.ingestion_queue_arn
-  aws_region = var.aws_region
-  documents_kms_key_arn = module.s3.documents_kms_key_arn
+  sqs_queue_arn           = module.sqs.ingestion_queue_arn
+  aws_region              = var.aws_region
+  documents_kms_key_arn   = module.s3.documents_kms_key_arn
 }
 
 module "rds" {
@@ -62,13 +62,13 @@ module "ecs" {
   vpc_id                = module.network.vpc_id
   public_subnet_ids     = module.network.public_subnet_ids
   alb_security_group_id = module.network.alb_security_group_id
-  private_subnet_ids = module.network.private_subnet_ids
+  private_subnet_ids    = module.network.private_subnet_ids
   ecs_security_group_id = module.network.ecs_security_group_id
 
   # IAM roles (from the iam module)
-  execution_role_arn = module.iam.execution_role_arn
-  api_task_role_arn = module.iam.api_task_role_arn
-  worker_task_role_arn =  module.iam.worker_task_role_arn
+  execution_role_arn   = module.iam.execution_role_arn
+  api_task_role_arn    = module.iam.api_task_role_arn
+  worker_task_role_arn = module.iam.worker_task_role_arn
 
   # Container images (from the ecr module)
   api_repository_url    = data.terraform_remote_state.ecr.outputs.api_repository_url
@@ -77,13 +77,13 @@ module "ecs" {
   # Runtime configuration for the containers
   documents_bucket_name       = module.s3.documents_bucket_name
   db_secret_arn               = module.rds.db_secret_arn
-  migration_db_secret_arn = module.rds.migration_db_secret_arn
+  migration_db_secret_arn     = module.rds.migration_db_secret_arn
   redis_endpoint              = module.elasticache.redis_endpoint
   sqs_queue_url               = module.sqs.queue_url
   cognito_user_pool_id        = module.cognito.user_pool_id
   cognito_user_pool_client_id = module.cognito.user_pool_client_id
 
-  api_image_tag = var.api_image_tag
+  api_image_tag    = var.api_image_tag
   worker_image_tag = var.worker_image_tag
 }
 

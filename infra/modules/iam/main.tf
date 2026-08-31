@@ -60,32 +60,32 @@ resource "aws_iam_role_policy_attachment" "execution_secrets_attach" {
 
 # --- API task role ---
 resource "aws_iam_role" "ecs_task_api" {
-  name = "documind-ai-ecs-task-api-role-${var.environment}"
+  name               = "documind-ai-ecs-task-api-role-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 }
 
 data "aws_iam_policy_document" "api_task_permissions" {
   statement {
-    sid = "DocumentBucketPut"
-    actions = [ "s3:PutObject" ]
-    resources = [ "${var.documents_bucket_arn}/*" ]
+    sid       = "DocumentBucketPut"
+    actions   = ["s3:PutObject"]
+    resources = ["${var.documents_bucket_arn}/*"]
   }
 
   statement {
-    sid = "DocumentKMSEncrypt"
-    actions = [ "kms:GenerateDataKey" ]
-    resources = [ var.documents_kms_key_arn ]
+    sid       = "DocumentKMSEncrypt"
+    actions   = ["kms:GenerateDataKey"]
+    resources = [var.documents_kms_key_arn]
   }
 
   statement {
-    sid = "SecretsAccess"
-    actions = [ "secretsmanager:GetSecretValue" ]
-    resources = [ var.db_secret_arn ]
+    sid       = "SecretsAccess"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [var.db_secret_arn]
   }
 }
 
 resource "aws_iam_policy" "api_task_policy" {
-  name = "documind-ai-ecs-task-api-permissions-${var.environment}"
+  name   = "documind-ai-ecs-task-api-permissions-${var.environment}"
   policy = data.aws_iam_policy_document.api_task_permissions.json
 }
 
@@ -102,42 +102,42 @@ resource "aws_iam_role" "ecs_task_worker" {
 
 data "aws_iam_policy_document" "worker_task_permissions" {
   statement {
-    sid = "DocumentBucketGet"
-    actions = [ "s3:GetObject" ]
-    resources = [ "${var.documents_bucket_arn}/*" ]
+    sid       = "DocumentBucketGet"
+    actions   = ["s3:GetObject"]
+    resources = ["${var.documents_bucket_arn}/*"]
   }
 
   statement {
-    sid = "DocumentsKMSDecrypt"
-    actions = [ "kms:Decrypt" ]
-    resources = [ var.documents_kms_key_arn ]
+    sid       = "DocumentsKMSDecrypt"
+    actions   = ["kms:Decrypt"]
+    resources = [var.documents_kms_key_arn]
   }
 
   statement {
     sid = "BedRockAccess"
-    actions = [ 
+    actions = [
       "bedrock:InvokeModel",
       "bedrock:InvokeModelWithResponseStream",
-     ]
-     resources = [ 
+    ]
+    resources = [
       "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-embed-text-v2:0",
-      ]
+    ]
   }
 
   statement {
     sid = "SQSConsume"
-    actions = [ 
+    actions = [
       "sqs:ReceiveMessage",
       "sqs:DeleteMessage",
       "sqs:GetQueueAttributes",
-     ]
-     resources = [ var.sqs_queue_arn ]
+    ]
+    resources = [var.sqs_queue_arn]
   }
 
   statement {
-    sid = "SecretsAccess"
-    actions = [ "secretsmanager:GetSecretValue" ]
-    resources = [ var.db_secret_arn ]
+    sid       = "SecretsAccess"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [var.db_secret_arn]
   }
 }
 
@@ -147,6 +147,6 @@ resource "aws_iam_policy" "worker_task_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "worker_task_attach" {
-  role = aws_iam_role.ecs_task_worker.name
+  role       = aws_iam_role.ecs_task_worker.name
   policy_arn = aws_iam_policy.worker_task_policy.arn
 }

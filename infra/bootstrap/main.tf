@@ -6,7 +6,7 @@ terraform {
     }
 
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "~> 3.6"
     }
   }
@@ -15,7 +15,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1" 
+  region = "us-east-1"
   default_tags {
     tags = {
       Project   = "documind-ai"
@@ -31,7 +31,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_kms_key" "tfstate" {
   description             = "Encrypts DocuMind AI Terraform state bucket objects"
   deletion_window_in_days = 10
-  enable_key_rotation      = true
+  enable_key_rotation     = true
 
   tags = {
     Project = "documind-ai"
