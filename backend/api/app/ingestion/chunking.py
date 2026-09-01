@@ -116,36 +116,3 @@ def chunk_document(
             chunk_index += 1
 
     return chunks
-
-
-if __name__ == "__main__":
-    sample = """Intro text before any heading.
-
-# Q3 Report
-
-Some opening prose.
-
-## Revenue
-
-Revenue grew this quarter.
-
-### EMEA
-
-| Region | Growth |
-|--------|--------|
-| France | 12%    |
-
-## Costs
-
-Costs were flat.
-"""
-    chunks = chunk_document(
-        sample,
-        embedding_model="amazon.titan-embed-text-v2:0",
-        embedding_version="1",
-    )
-    for c in chunks:
-        print(
-            f"[{c.chunk_index}] path={c.heading_path!r} tokens={c.token_count} embedding={c.embedding}"  # noqa: E501
-        )
-        print(f"    content={c.content[:50]!r}")
