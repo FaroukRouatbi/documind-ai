@@ -1,5 +1,5 @@
 from app.documents.repository import DocumentRepository
-from tests.tenant_isolation.conftest import tenant_session
+from tests.conftest import tenant_session
 
 
 async def test_worker_scoped_to_b_cannot_fetch_a_document_by_s3_key(

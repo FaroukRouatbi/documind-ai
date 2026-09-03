@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from app.documents.models import Document
-from tests.tenant_isolation.conftest import tenant_session
+from tests.conftest import tenant_session
 
 
 async def test_scoped_session_sees_only_own_tenant_documents(app_sessionmaker, seeded_tenants):
