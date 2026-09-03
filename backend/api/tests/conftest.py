@@ -1,12 +1,9 @@
-import uuid
-
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
-from app.main import app
 from app.core.security import get_current_user
-from app.core.database import get_tenant_db
+from app.main import app
 
 
 @pytest_asyncio.fixture
@@ -22,6 +19,7 @@ TEST_TENANT_ID = "11111111-1111-1111-1111-111111111111"
 @pytest.fixture
 def override_current_user():
     """Override auth to return a fixed fake tenant, no JWT needed."""
+
     async def _fake_current_user():
         return {"sub": "test-user", "tenant_id": TEST_TENANT_ID}
 
