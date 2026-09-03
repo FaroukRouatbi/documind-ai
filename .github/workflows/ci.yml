@@ -67,7 +67,7 @@ jobs:
 
       - name: Test
         run: uv run pytest --cov --cov-report=term-missing
-  
+
   terraform:
     runs-on: ubuntu-latest
 

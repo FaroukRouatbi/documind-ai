@@ -1,7 +1,7 @@
 import boto3
 
-
 TEST_TENANT_ID = "11111111-1111-1111-1111-111111111111"
+
 
 def bootstrap_test_user(pool_id: str, region: str) -> None:
     client = boto3.client("cognito-idp", region_name=region)
@@ -34,4 +34,3 @@ def bootstrap_test_user(pool_id: str, region: str) -> None:
         UserAttributes=[{"Name": "custom:tenant_id", "Value": TEST_TENANT_ID}],
     )
     print("Set custom:tenant_id attribute")
-
