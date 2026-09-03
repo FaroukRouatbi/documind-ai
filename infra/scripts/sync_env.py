@@ -1,11 +1,11 @@
 import argparse
 import json
 import subprocess
-import boto3
-import psycopg
 from pathlib import Path
 
-from cognito_bootstrap import bootstrap_test_user, TEST_TENANT_ID
+import psycopg
+from cognito_bootstrap import TEST_TENANT_ID, bootstrap_test_user
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -61,10 +61,14 @@ def update_env_file(env_path: Path, tf_outputs: dict, mapping: dict) -> None:
 
     env_path.write_text("\n".join(updated_lines) + "\n")
 
+
 def ensure_app_role() -> None:
     conn = psycopg.connect(
-        host="localhost", port=5433, dbname="documind",
-        user="documind", password="localdev",
+        host="localhost",
+        port=5433,
+        dbname="documind",
+        user="documind",
+        password="localdev",
     )
     conn.autocommit = True
     with conn.cursor() as cur:
@@ -73,17 +77,25 @@ def ensure_app_role() -> None:
         if exists:
             print("documind_app role already exists, skipping")
         else:
-            cur.execute("CREATE ROLE documind_app WITH LOGIN PASSWORD %s", ("local_dev_app_pw_2026",))
+            cur.execute(
+                "CREATE ROLE documind_app WITH LOGIN PASSWORD %s",
+                ("local_dev_app_pw_2026",),
+            )
             cur.execute("GRANT USAGE ON SCHEMA public TO documind_app")
-            cur.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON documents, tenants TO documind_app")
+            cur.execute(
+                "GRANT SELECT, INSERT, UPDATE, DELETE ON documents, tenants TO documind_app"
+            )
             print("Created documind_app role with grants")
     conn.close()
 
 
 def ensure_test_tenant() -> None:
     conn = psycopg.connect(
-        host="localhost", port=5433, dbname="documind",
-        user="documind", password="localdev",
+        host="localhost",
+        port=5433,
+        dbname="documind",
+        user="documind",
+        password="localdev",
     )
     conn.autocommit = True
     with conn.cursor() as cur:
