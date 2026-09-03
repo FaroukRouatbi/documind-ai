@@ -3,7 +3,7 @@ import asyncio
 from sqlalchemy import select
 
 from app.documents.models import Document
-from tests.tenant_isolation.conftest import tenant_session
+from tests.conftest import tenant_session
 
 
 async def _read_visible_docs(sessionmaker, tenant_id):
