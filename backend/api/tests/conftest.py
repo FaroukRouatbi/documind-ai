@@ -6,6 +6,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from app.chunks.models import Chunk
 from app.core.config import DBCredentials, settings
 from app.core.database import get_tenant_db
 from app.core.security import get_current_user
@@ -159,3 +160,27 @@ async def seeded_tenants(owner_sessionmaker):
                 text("DELETE FROM tenants WHERE id = ANY(:ids)"),
                 {"ids": [data["tenant_a"], data["tenant_b"]]},
             )
+
+
+@pytest_asyncio.fixture
+async def seed_chunks(owner_sessionmaker):
+    seeded_doc_ids: set = set()
+
+    async def _seed(chunks: list[Chunk]):
+        async with owner_sessionmaker() as session:
+            async with session.begin():
+                for c in chunks:
+                    seeded_doc_ids.add(c.document_id)
+                    session.add(c)
+                await session.flush()
+
+    yield _seed
+
+    # teardown — runs even if the test failed
+    if seeded_doc_ids:
+        async with owner_sessionmaker() as session:
+            async with session.begin():
+                await session.execute(
+                    text("DELETE FROM chunks WHERE document_id = ANY(:docs)"),
+                    {"docs": list(seeded_doc_ids)},
+                )
