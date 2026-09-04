@@ -1,3 +1,4 @@
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.chunks.models import Chunk
@@ -43,3 +44,11 @@ class ChunkRepository:
         await self.session.flush()
 
         return orm_chunks
+
+    async def search(self, query_emebdding: list[float], k: int = 5) -> list[Chunk]:
+        await self.session.execute(text("SET LOCAL hnsw.iterative_scan = strict_order"))
+
+        result = await self.session.execute(
+            select(Chunk).order_by(Chunk.embedding.cosine_distance(query_emebdding)).limit(k)
+        )
+        return list(result.scalars().all())

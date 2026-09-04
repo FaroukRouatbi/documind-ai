@@ -6,10 +6,13 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from app.chunks.models import Chunk
 from app.core.config import DBCredentials, settings
 from app.core.database import get_tenant_db
 from app.core.security import get_current_user
+from app.documents.models import Document
 from app.main import app
+from app.tenants.models import Tenant
 
 
 @pytest_asyncio.fixture
@@ -110,3 +113,74 @@ async def tenant_session(sessionmaker, tenant_id):
                 text("SELECT set_config('app.tenant_id', :tid, true)"), {"tid": str(tenant_id)}
             )
             yield session
+
+
+@pytest_asyncio.fixture
+async def seeded_tenants(owner_sessionmaker):
+    async with owner_sessionmaker() as session:
+        async with session.begin():
+            tenant_a = Tenant(name="Tenant A")
+            tenant_b = Tenant(name="Tenant B")
+            session.add_all([tenant_a, tenant_b])
+            await session.flush()
+
+            doc_a = Document(
+                tenant_id=tenant_a.id,
+                filename="a.md",
+                s3_key=f"{tenant_a.id}/a.md",
+                modality="text",
+            )
+            doc_b = Document(
+                tenant_id=tenant_b.id,
+                filename="b.md",
+                s3_key=f"{tenant_b.id}/b.md",
+                modality="text",
+            )
+            session.add_all([doc_a, doc_b])
+            await session.flush()
+
+            data = {
+                "tenant_a": tenant_a.id,
+                "tenant_b": tenant_b.id,
+                "doc_a": doc_a.id,
+                "doc_b": doc_b.id,
+                "doc_a_s3_key": doc_a.s3_key,
+                "doc_b_s3_key": doc_b.s3_key,
+            }
+
+    yield data
+
+    async with owner_sessionmaker() as session:
+        async with session.begin():
+            await session.execute(
+                text("DELETE FROM documents WHERE tenant_id = ANY(:ids)"),
+                {"ids": [data["tenant_a"], data["tenant_b"]]},
+            )
+            await session.execute(
+                text("DELETE FROM tenants WHERE id = ANY(:ids)"),
+                {"ids": [data["tenant_a"], data["tenant_b"]]},
+            )
+
+
+@pytest_asyncio.fixture
+async def seed_chunks(owner_sessionmaker):
+    seeded_doc_ids: set = set()
+
+    async def _seed(chunks: list[Chunk]):
+        async with owner_sessionmaker() as session:
+            async with session.begin():
+                for c in chunks:
+                    seeded_doc_ids.add(c.document_id)
+                    session.add(c)
+                await session.flush()
+
+    yield _seed
+
+    # teardown — runs even if the test failed
+    if seeded_doc_ids:
+        async with owner_sessionmaker() as session:
+            async with session.begin():
+                await session.execute(
+                    text("DELETE FROM chunks WHERE document_id = ANY(:docs)"),
+                    {"docs": list(seeded_doc_ids)},
+                )
