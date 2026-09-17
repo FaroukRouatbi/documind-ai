@@ -31,7 +31,7 @@ class BedrockEmbeddingClient:
         region: str,
         model_id: str = "amazon.titan-embed-text-v2:0",
         dimensions: int = 1024,
-        embedding_version: int = 1,
+        embedding_version: str = "1",
     ):
         self._client = boto3.client(
             "bedrock-runtime",
@@ -70,29 +70,5 @@ class BedrockEmbeddingClient:
         return self._model_id
 
     @property
-    def embedding_version(self) -> int:
+    def embedding_version(self) -> str:
         return self._embedding_version
-
-
-if __name__ == "__main__":
-
-    def make_error(code):
-        return ClientError({"Error": {"Code": code, "Message": "x"}}, "InvokeModel")
-
-    print(_is_transient(make_error("ThrottlingException")))  # True
-    print(_is_transient(make_error("ValidationException")))  # False
-    print(_is_permanent(make_error("ValidationException")))  # True
-
-    # breaker trip test
-    br = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[_is_permanent])
-
-    def always_throttle():
-        raise make_error("ThrottlingException")
-
-    for i in range(5):
-        try:
-            br.call(always_throttle)
-        except pybreaker.CircuitBreakerError:
-            print(f"attempt {i}: breaker OPEN (fast-fail)")
-        except ClientError:
-            print(f"attempt {i}: passed through, counted as failure")

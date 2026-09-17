@@ -6,8 +6,8 @@ import boto3
 import pybreaker
 import structlog
 
+from app.core.bedrock import BedrockEmbeddingClient
 from app.core.config import settings
-from app.core.fake_embedder import FakeEmbedder
 from app.core.logging import configure_logging
 from app.documents.s3 import S3Client
 from app.ingestion.text import TextIngestionStrategy
@@ -35,8 +35,7 @@ async def handle_message(message, *, s3_client, strategy) -> None:
 async def run() -> None:
     configure_logging()
     s3_client = S3Client(settings.aws_region)
-    ##embedder = BedrockEmbeddingClient(settings.aws_region)
-    embedder = FakeEmbedder()
+    embedder = BedrockEmbeddingClient(settings.aws_region)
     strategy = TextIngestionStrategy(embedder)
     sqs = boto3.client("sqs", region_name=settings.aws_region)
 
