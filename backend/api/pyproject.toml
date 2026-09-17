@@ -73,7 +73,13 @@ dependencies = [
 pythonpath = "."
 asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "-v"
+# Integration tests hit real AWS (cost + credentials + flakiness), so they are
+# excluded from the default run and from CI. Run them deliberately with:
+#   uv run pytest -m integration
+addopts = "-v -m 'not integration'"
+markers = [
+    "integration: touches real external services (AWS); excluded by default",
+]
 
 [dependency-groups]
 dev = [

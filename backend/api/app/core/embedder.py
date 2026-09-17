@@ -2,7 +2,10 @@ from typing import Protocol
 
 
 class Embedder(Protocol):
-    model_id: str
-    embedding_version: str
+    @property
+    def model_id(self) -> str: ...
+
+    @property
+    def embedding_version(self) -> str: ...
 
     async def embed(self, text: str) -> list[float]: ...
