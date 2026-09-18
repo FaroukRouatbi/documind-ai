@@ -7,8 +7,10 @@ from app.generation.client import BedrockGenerationClient
 async def test_generate_returns_text_from_claude():
     client = BedrockGenerationClient("us-east-1")
 
-    result = await client.generate("Reply with exactly the word: pong")
-
+    result = await client.generate(
+        system="You are a terse assistant. Reply with a single word.",
+        user_content="Reply with exactly the word: pong",
+    )
     assert result.text.strip()
     assert result.stop_reason == "end_turn"
     assert result.input_tokens > 0

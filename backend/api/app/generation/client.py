@@ -27,23 +27,23 @@ class BedrockGenerationClient:
             fail_max=5, reset_timeout=30, exclude=[is_permanent]
         )
 
-    async def generate(self, prompt: str) -> GenerationResult:
-        return await asyncio.to_thread(self._generate_guarded, prompt)
+    async def generate(self, system: str, user_content: str) -> GenerationResult:
+        return await asyncio.to_thread(self._generate_guarded, system, user_content)
 
-    def _generate_guarded(self, prompt: str) -> GenerationResult:
-        return self._breaker.call(self._generate_sync, prompt)
+    def _generate_guarded(self, system: str, user_content: str) -> GenerationResult:
+        return self._breaker.call(self._generate_sync, system, user_content)
 
-    def _generate_sync(self, prompt: str) -> GenerationResult:
+    def _generate_sync(self, system: str, user_content: str) -> GenerationResult:
         body = json.dumps(
             {
                 "anthropic_version": "bedrock-2023-05-31",
                 "max_tokens": self._max_tokens,
-                "messages": [{"role": "user", "content": prompt}],
+                "system": system,
+                "messages": [{"role": "user", "content": user_content}],
             }
         )
         response = self._client.invoke_model(modelId=self._model_id, body=body)
         payload = json.loads(response["body"].read())
-
         return GenerationResult(
             text=payload["content"][0]["text"],
             stop_reason=payload["stop_reason"],
