@@ -9,8 +9,9 @@ resource "aws_sqs_queue" "ingestion_dlq" {
 }
 
 resource "aws_sqs_queue" "ingestion" {
-  name                    = "documind-ai-ingestion-${var.environment}"
-  sqs_managed_sse_enabled = true
+  name                       = "documind-ai-ingestion-${var.environment}"
+  sqs_managed_sse_enabled    = true
+  visibility_timeout_seconds = 300
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.ingestion_dlq.arn
