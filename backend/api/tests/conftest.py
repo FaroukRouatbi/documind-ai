@@ -184,3 +184,15 @@ async def seed_chunks(owner_sessionmaker):
                     text("DELETE FROM chunks WHERE document_id = ANY(:docs)"),
                     {"docs": list(seeded_doc_ids)},
                 )
+
+
+@pytest_asyncio.fixture
+async def cleanup_chunks(owner_sessionmaker, seeded_tenants):
+    yield
+
+    async with owner_sessionmaker() as session:
+        async with session.begin():
+            await session.execute(
+                text("DELETE FROM chunks WHERE document_id = ANY(:docs)"),
+                {"docs": [seeded_tenants["doc_a"], seeded_tenants["doc_b"]]},
+            )
