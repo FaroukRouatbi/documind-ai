@@ -2,7 +2,7 @@ import pybreaker
 import pytest
 from botocore.exceptions import ClientError
 
-from app.core.bedrock import _is_permanent, _is_transient
+from app.core.bedrock_errors import is_permanent, is_transient
 
 
 def _client_error(code: str) -> ClientError:
@@ -20,23 +20,23 @@ def _client_error(code: str) -> ClientError:
     ],
 )
 def test_transient_codes_are_transient(code):
-    assert _is_transient(_client_error(code)) is True
-    assert _is_permanent(_client_error(code)) is False
+    assert is_transient(_client_error(code)) is True
+    assert is_permanent(_client_error(code)) is False
 
 
 @pytest.mark.parametrize("code", ["ValidationException", "AccessDeniedException"])
 def test_permanent_codes_are_not_transient(code):
-    assert _is_transient(_client_error(code)) is False
-    assert _is_permanent(_client_error(code)) is True
+    assert is_transient(_client_error(code)) is False
+    assert is_permanent(_client_error(code)) is True
 
 
 def test_non_client_error_is_treated_as_permanent():
-    assert _is_transient(ValueError("boom")) is False
-    assert _is_permanent(ValueError("boom")) is True
+    assert is_transient(ValueError("boom")) is False
+    assert is_permanent(ValueError("boom")) is True
 
 
 def test_breaker_opens_after_repeated_transient_failures():
-    breaker = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[_is_permanent])
+    breaker = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[is_permanent])
 
     def always_throttle():
         raise _client_error("ThrottlingException")
@@ -56,7 +56,7 @@ def test_breaker_opens_after_repeated_transient_failures():
 
 
 def test_breaker_does_not_open_on_permanent_failures():
-    breaker = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[_is_permanent])
+    breaker = pybreaker.CircuitBreaker(fail_max=3, reset_timeout=30, exclude=[is_permanent])
 
     def always_validation_error():
         raise _client_error("ValidationException")

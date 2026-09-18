@@ -4,25 +4,8 @@ import json
 import boto3
 import pybreaker
 from botocore.config import Config
-from botocore.exceptions import ClientError
 
-TRANSIENT_ERROR_CODES = {
-    "ThrottlingException",
-    "ServiceUnavailableException",
-    "ModelTimeoutException",
-    "InternalServerException",
-    "ModelNotReadyException",
-}
-
-
-def _is_transient(exc: Exception) -> bool:
-    if isinstance(exc, ClientError):
-        return exc.response["Error"]["Code"] in TRANSIENT_ERROR_CODES
-    return False
-
-
-def _is_permanent(exc: Exception) -> bool:
-    return not _is_transient(exc)
+from app.core.bedrock_errors import is_permanent
 
 
 class BedrockEmbeddingClient:
@@ -44,7 +27,7 @@ class BedrockEmbeddingClient:
         self._breaker = pybreaker.CircuitBreaker(
             fail_max=5,
             reset_timeout=30,
-            exclude=[_is_permanent],
+            exclude=[is_permanent],
         )
 
     async def embed(self, text: str) -> list[float]:
