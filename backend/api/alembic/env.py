@@ -4,6 +4,7 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
+import app.models_registry  # noqa: F401  — registers all models with Base.metadata
 from alembic import context
 from app.core.config import settings
 from app.core.database import Base
@@ -28,6 +29,15 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
+
+target_metadata = Base.metadata
+
+if not target_metadata.tables:
+    raise RuntimeError(
+        "No tables registered on Base.metadata — model imports are missing. "
+        "Autogenerate would produce a destructive 'drop everything' migration. "
+        "Check that app.models_registry is imported in env.py."
+    )
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

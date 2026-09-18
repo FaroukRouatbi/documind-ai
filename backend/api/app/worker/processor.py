@@ -1,3 +1,4 @@
+import hashlib
 import uuid
 
 import pybreaker
@@ -7,7 +8,7 @@ from app.chunks.repository import ChunkRepository
 from app.core.database import get_worker_session
 from app.core.metrics import ingestion_metrics
 from app.documents.repository import DocumentRepository
-from app.documents.s3 import S3Client
+from app.documents.s3 import Downloader
 from app.ingestion.base import IngestionStrategy
 
 logger = structlog.get_logger()
@@ -17,7 +18,7 @@ async def process_upload(
     bucket: str,
     s3_key: str,
     *,
-    s3_client: S3Client,
+    s3_client: Downloader,
     strategy: IngestionStrategy,
 ) -> None:
     tenant_id = uuid.UUID(s3_key.split("/")[0])
@@ -45,8 +46,15 @@ async def process_upload(
 
         async with ingestion_metrics(strategy="text", correlation_id=document.correlation_id) as m:
             try:
-                await doc_repo.update_status(document.id, "processing")
                 file_bytes = await s3_client.download(bucket, s3_key)
+
+                content_hash = hashlib.sha256(file_bytes).hexdigest()
+                if document.content_hash == content_hash:
+                    logger.info("duplicate_ingestion_skipped", s3_key=s3_key)
+                    return
+
+                await doc_repo.update_status(document.id, "processing")
+
                 chunks = await strategy.process(document, file_bytes)
 
                 chunk_repo = ChunkRepository(session)
@@ -57,6 +65,7 @@ async def process_upload(
                 )
 
                 await doc_repo.update_status(document.id, "ready")
+                await doc_repo.set_content_hash(document.id, content_hash)
                 m.success(len(chunks))
 
             except pybreaker.CircuitBreakerError:

@@ -71,3 +71,9 @@ class DocumentRepository:
     async def get_by_s3_key(self, s3_key: str) -> Document | None:
         result = await self.session.execute(select(Document).where(Document.s3_key == s3_key))
         return result.scalar_one_or_none()
+
+    async def set_content_hash(self, document_id: uuid.UUID, content_hash: str) -> bool:
+        stmt = update(Document).where(Document.id == document_id).values(content_hash=content_hash)
+        result = await self.session.execute(stmt)
+        await self.session.flush()
+        return result.rowcount > 0  # type: ignore[attr-defined]  # rowcount exists on the underlying CursorResult

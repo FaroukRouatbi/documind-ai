@@ -1,4 +1,5 @@
 import asyncio
+from typing import Protocol
 
 import boto3
 import pybreaker
@@ -6,6 +7,10 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from app.core.config import settings
+
+
+class Downloader(Protocol):
+    async def download(self, bucket: str, key: str) -> bytes: ...
 
 
 def generate_upload_post(s3_key: str, content_type: str, max_size_bytes: int = 50_000_000) -> dict:

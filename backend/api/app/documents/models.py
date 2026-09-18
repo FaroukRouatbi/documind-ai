@@ -17,3 +17,4 @@ class Document(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     modality: Mapped[str] = mapped_column()
     ingestion_strategy: Mapped[str | None] = mapped_column()
     correlation_id: Mapped[str | None] = mapped_column(nullable=True)
+    content_hash: Mapped[str | None] = mapped_column(nullable=True)
