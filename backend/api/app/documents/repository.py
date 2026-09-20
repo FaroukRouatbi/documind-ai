@@ -77,3 +77,7 @@ class DocumentRepository:
         result = await self.session.execute(stmt)
         await self.session.flush()
         return result.rowcount > 0  # type: ignore[attr-defined]  # rowcount exists on the underlying CursorResult
+
+    async def get_by_ids(self, document_ids: list[uuid.UUID]) -> list[Document]:
+        result = await self.session.execute(select(Document).where(Document.id.in_(document_ids)))
+        return list(result.scalars().all())
