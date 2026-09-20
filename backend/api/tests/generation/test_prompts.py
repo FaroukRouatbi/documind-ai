@@ -1,20 +1,5 @@
-import uuid
-
-from app.chunks.models import Chunk
 from app.generation.prompts import build_prompt, extract_citations
-
-
-def _chunk(content: str) -> Chunk:
-    return Chunk(
-        id=uuid.uuid4(),
-        tenant_id=uuid.uuid4(),
-        document_id=uuid.uuid4(),
-        chunk_index=0,
-        content=content,
-        embedding_model="test",
-        embedding_version="v1",
-        ingestion_strategy="text",
-    )
+from tests.generation.conftest import _chunk
 
 
 def test_prompt_wraps_each_chunk_in_indexed_tags():

@@ -1,8 +1,6 @@
-import uuid
-
-from app.chunks.models import Chunk
 from app.generation.schemas import GenerationResult
 from app.generation.service import GenerationService
+from tests.generation.conftest import _chunk
 
 
 class _FakeGenerationClient:
@@ -21,19 +19,6 @@ class _FakeGenerationClient:
             input_tokens=100,
             output_tokens=50,
         )
-
-
-def _chunk(content: str) -> Chunk:
-    return Chunk(
-        id=uuid.uuid4(),
-        tenant_id=uuid.uuid4(),
-        document_id=uuid.uuid4(),
-        chunk_index=0,
-        content=content,
-        embedding_model="test",
-        embedding_version="v1",
-        ingestion_strategy="text",
-    )
 
 
 async def test_valid_citations_resolve_to_chunk_ids():

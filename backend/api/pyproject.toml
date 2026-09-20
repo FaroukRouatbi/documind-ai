@@ -76,7 +76,10 @@ testpaths = ["tests"]
 # Integration tests hit real AWS (cost + credentials + flakiness), so they are
 # excluded from the default run and from CI. Run them deliberately with:
 #   uv run pytest -m integration
-addopts = "-v -m 'not integration'"
+# --import-mode=importlib lets test files share a basename across directories
+# (e.g. generation/test_service.py and retrieval/test_service.py) without
+# needing __init__.py in every test package.
+addopts = "-v -m 'not integration' --import-mode=importlib"
 markers = [
     "integration: touches real external services (AWS); excluded by default",
 ]
