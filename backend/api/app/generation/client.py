@@ -1,5 +1,6 @@
 import asyncio
 import json
+from typing import Protocol
 
 import boto3
 import pybreaker
@@ -7,6 +8,10 @@ from botocore.config import Config
 
 from app.core.bedrock_errors import is_permanent
 from app.generation.schemas import GenerationResult
+
+
+class Generator(Protocol):
+    async def generate(self, system: str, user_content: str) -> GenerationResult: ...
 
 
 class BedrockGenerationClient:

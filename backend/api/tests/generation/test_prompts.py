@@ -1,7 +1,7 @@
 import uuid
 
 from app.chunks.models import Chunk
-from app.generation.prompts import build_prompt
+from app.generation.prompts import build_prompt, extract_citations
 
 
 def _chunk(content: str) -> Chunk:
@@ -80,3 +80,23 @@ def test_empty_chunks_produces_well_formed_prompt():
 
     assert "What is it?" in prompt.user_content
     assert prompt.citation_map == {}
+
+
+def test_extract_single_citation():
+    assert extract_citations("The revenue grew [1].") == [1]
+
+
+def test_extract_multiple_adjacent_citations():
+    assert extract_citations("Costs were flat [2][3].") == [2, 3]
+
+
+def test_extract_dedupes_and_sorts():
+    assert extract_citations("[3] says x, and [1] agrees, see also [3].") == [1, 3]
+
+
+def test_extract_returns_empty_when_no_citations():
+    assert extract_citations("I don't know based on the provided documents.") == []
+
+
+def test_extract_ignores_non_numeric_brackets():
+    assert extract_citations("See [appendix] and [1].") == [1]

@@ -1,7 +1,14 @@
+import re
 import secrets
 
 from app.chunks.models import Chunk
 from app.generation.schemas import BuiltPrompt
+
+CITATION_PATTERN = re.compile(r"\[(\d+)\]")
+
+
+def extract_citations(text: str) -> list[int]:
+    return sorted({int(m) for m in CITATION_PATTERN.findall(text)})
 
 
 def _system_instructions(tag: str) -> str:
