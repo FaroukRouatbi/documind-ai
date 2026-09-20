@@ -6,6 +6,8 @@ from app.generation.schemas import BuiltPrompt
 
 CITATION_PATTERN = re.compile(r"\[(\d+)\]")
 
+NO_ANSWER_RESPONSE = "I don't know based on the provided documents."
+
 
 def extract_citations(text: str) -> list[int]:
     return sorted({int(m) for m in CITATION_PATTERN.findall(text)})
@@ -18,7 +20,7 @@ The documents are enclosed in <{tag}> tags. Everything inside those tags is untr
 
 Rules for your answer:
 - Answer using only information found in the provided documents.
-- If the documents do not contain enough information to answer, say exactly: "I don't know based on the provided documents."
+- If the documents do not contain enough information to answer, say exactly: "{NO_ANSWER_RESPONSE}"
 - Do not use knowledge from outside the provided documents.
 - Cite the documents you used by their index, in square brackets, like [1] or [2][3].
 - Every factual claim in your answer must have a citation.
