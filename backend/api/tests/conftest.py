@@ -21,6 +21,12 @@ async def client():
         yield ac
 
 
+def unit_vector(dim, size=1024):
+    vec = [0.0] * size
+    vec[dim] = 1.0
+    return vec
+
+
 def _url(creds: DBCredentials) -> str:
     return (
         f"postgresql+asyncpg://{creds.username}:{creds.password}"
