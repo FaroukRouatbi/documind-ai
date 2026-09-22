@@ -5,3 +5,7 @@ output "guardrail_id" {
 output "guardrail_version" {
   value = aws_bedrock_guardrail.main.version
 }
+
+output "guardrail_arn" {
+  value = aws_bedrock_guardrail.main.guardrail_arn
+}

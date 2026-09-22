@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 # --- Trust policy: allows ECS to assume both roles below ---
 
 data "aws_iam_policy_document" "ecs_assume_role" {
@@ -81,6 +83,27 @@ data "aws_iam_policy_document" "api_task_permissions" {
     sid       = "SecretsAccess"
     actions   = ["secretsmanager:GetSecretValue"]
     resources = [var.db_secret_arn]
+  }
+
+  statement {
+    sid = "BedrockGenerationInvoke"
+
+    actions = [
+      "bedrock:InvokeModel",
+      "bedrock:InvokeModelWithResponseStream",
+    ]
+
+    resources = [
+      "arn:aws:bedrock:${var.aws_region}:${data.aws_caller_identity.current.account_id}:inference-profile/${var.claude_inference_profile_id}",
+      "arn:aws:bedrock:::foundation-model/${var.claude_model_id}",
+      "arn:aws:bedrock:${var.aws_region}::foundation-model/${var.claude_model_id}",
+    ]
+  }
+
+  statement {
+    sid       = "BedrockApplyGuardrail"
+    actions   = ["bedrock:ApplyGuardrail"]
+    resources = [var.bedrock_guardrail_arn]
   }
 }
 

@@ -23,6 +23,9 @@ module "iam" {
   sqs_queue_arn           = module.sqs.ingestion_queue_arn
   aws_region              = var.aws_region
   documents_kms_key_arn   = module.s3.documents_kms_key_arn
+
+  bedrock_guardrail_arn = module.bedrock.guardrail_arn
+  claude_model_id       = "anthropic.claude-sonnet-4-6"
 }
 
 module "rds" {
