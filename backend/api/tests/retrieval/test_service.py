@@ -1,13 +1,7 @@
 from app.chunks.models import Chunk
 from app.chunks.repository import ChunkRepository
 from app.retrieval.service import RetrievalService
-from tests.conftest import tenant_session
-
-
-def _unit_vector(dim, size=1024):
-    vec = [0.0] * size
-    vec[dim] = 1.0
-    return vec
+from tests.conftest import tenant_session, unit_vector
 
 
 class _FakeEmbedder:
@@ -32,7 +26,7 @@ async def test_retrieve_embeds_searches_and_orders(app_sessionmaker, seeded_tena
                 document_id=doc_a,
                 chunk_index=i,
                 content=f"chunk-{i}",
-                embedding=_unit_vector(i),
+                embedding=unit_vector(i),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -42,7 +36,7 @@ async def test_retrieve_embeds_searches_and_orders(app_sessionmaker, seeded_tena
     )
 
     # Fake embedder turns the query into the axis-0 vector → chunk-0 is the best match
-    embedder = _FakeEmbedder(_unit_vector(0))
+    embedder = _FakeEmbedder(unit_vector(0))
 
     async with tenant_session(app_sessionmaker, tenant_a) as session:
         service = RetrievalService(embedder, ChunkRepository(session))
@@ -64,7 +58,7 @@ async def test_retrieve_dedups_identical_content(app_sessionmaker, seeded_tenant
                 document_id=doc_a,
                 chunk_index=0,
                 content="duplicate",
-                embedding=_unit_vector(0),
+                embedding=unit_vector(0),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -74,7 +68,7 @@ async def test_retrieve_dedups_identical_content(app_sessionmaker, seeded_tenant
                 document_id=doc_a,
                 chunk_index=1,
                 content="duplicate",
-                embedding=_unit_vector(1),
+                embedding=unit_vector(1),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -82,7 +76,7 @@ async def test_retrieve_dedups_identical_content(app_sessionmaker, seeded_tenant
         ]
     )
 
-    embedder = _FakeEmbedder(_unit_vector(0))
+    embedder = _FakeEmbedder(unit_vector(0))
     async with tenant_session(app_sessionmaker, tenant_a) as session:
         service = RetrievalService(embedder, ChunkRepository(session))
         results = await service.retrieve("q", k=5)

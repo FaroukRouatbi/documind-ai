@@ -1,6 +1,4 @@
-async def test_list_documents_returns_paginated_shape(
-    client, override_current_user, override_tenant_db
-):
+async def test_list_documents_returns_paginated_shape(client, as_tenant_a):
     response = await client.get("/v1/documents")
 
     assert response.status_code == 200

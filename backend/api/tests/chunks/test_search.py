@@ -1,12 +1,6 @@
 from app.chunks.models import Chunk
 from app.chunks.repository import ChunkRepository
-from tests.conftest import tenant_session
-
-
-def _unit_vector(dim, size=1024):
-    vec = [0.0] * size
-    vec[dim] = 1.0
-    return vec
+from tests.conftest import tenant_session, unit_vector
 
 
 async def test_search_returns_nearest_chunk_first(app_sessionmaker, seeded_tenants, seed_chunks):
@@ -20,7 +14,7 @@ async def test_search_returns_nearest_chunk_first(app_sessionmaker, seeded_tenan
                 document_id=doc_a,
                 chunk_index=axis,
                 content=f"chunk-axis-{axis}",
-                embedding=_unit_vector(axis),
+                embedding=unit_vector(axis),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -30,7 +24,7 @@ async def test_search_returns_nearest_chunk_first(app_sessionmaker, seeded_tenan
     )
 
     async with tenant_session(app_sessionmaker, tenant_a) as session:
-        results = await ChunkRepository(session).search(_unit_vector(0), k=3)
+        results = await ChunkRepository(session).search(unit_vector(0), k=3)
 
     assert results[0].content == "chunk-axis-0"
 
@@ -48,7 +42,7 @@ async def test_search_does_not_leak_other_tenant_chunks(
                 document_id=doc_b,
                 chunk_index=0,
                 content="b-perfect-match",
-                embedding=_unit_vector(0),
+                embedding=unit_vector(0),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -58,7 +52,7 @@ async def test_search_does_not_leak_other_tenant_chunks(
                 document_id=doc_a,
                 chunk_index=0,
                 content="a-orthogonal",
-                embedding=_unit_vector(1),
+                embedding=unit_vector(1),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -67,7 +61,7 @@ async def test_search_does_not_leak_other_tenant_chunks(
     )
 
     async with tenant_session(app_sessionmaker, tenant_a) as session:
-        results = await ChunkRepository(session).search(_unit_vector(0), k=5)
+        results = await ChunkRepository(session).search(unit_vector(0), k=5)
 
     contents = {c.content for c in results}
     assert "a-orthogonal" in contents
@@ -86,7 +80,7 @@ async def test_search_respects_k_limit(app_sessionmaker, seeded_tenants, seed_ch
                 document_id=doc_a,
                 chunk_index=i,
                 content=f"chunk-{i}",
-                embedding=_unit_vector(i),
+                embedding=unit_vector(i),
                 embedding_model="test",
                 embedding_version="v1",
                 ingestion_strategy="text",
@@ -96,6 +90,6 @@ async def test_search_respects_k_limit(app_sessionmaker, seeded_tenants, seed_ch
     )
 
     async with tenant_session(app_sessionmaker, tenant_a) as session:
-        results = await ChunkRepository(session).search(_unit_vector(0), k=3)
+        results = await ChunkRepository(session).search(unit_vector(0), k=3)
 
     assert len(results) == 3

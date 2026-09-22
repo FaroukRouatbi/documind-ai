@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool, text
@@ -22,30 +21,10 @@ async def client():
         yield ac
 
 
-TEST_TENANT_ID = "11111111-1111-1111-1111-111111111111"
-
-
-@pytest.fixture
-def override_current_user():
-    """Override auth to return a fixed fake tenant, no JWT needed."""
-
-    async def _fake_current_user():
-        return {"sub": "test-user", "tenant_id": TEST_TENANT_ID}
-
-    app.dependency_overrides[get_current_user] = _fake_current_user
-    yield TEST_TENANT_ID
-    app.dependency_overrides.pop(get_current_user, None)
-
-
-@pytest_asyncio.fixture
-async def override_tenant_db(app_sessionmaker):
-    async def _get_test_tenant_db():
-        async with tenant_session(app_sessionmaker, TEST_TENANT_ID) as session:
-            yield session
-
-    app.dependency_overrides[get_tenant_db] = _get_test_tenant_db
-    yield
-    app.dependency_overrides.pop(get_tenant_db, None)
+def unit_vector(dim, size=1024):
+    vec = [0.0] * size
+    vec[dim] = 1.0
+    return vec
 
 
 def _url(creds: DBCredentials) -> str:
@@ -160,6 +139,26 @@ async def seeded_tenants(owner_sessionmaker):
                 text("DELETE FROM tenants WHERE id = ANY(:ids)"),
                 {"ids": [data["tenant_a"], data["tenant_b"]]},
             )
+
+
+@pytest_asyncio.fixture
+async def as_tenant_a(seeded_tenants, app_sessionmaker):
+    """Authenticate and DB-scope the app as seeded tenant A."""
+    tenant_a = seeded_tenants["tenant_a"]
+
+    async def _fake_current_user():
+
+        return {"sub": "test-user", "tenant_id": str(tenant_a)}
+
+    async def _get_test_tenant_db():
+        async with tenant_session(app_sessionmaker, tenant_a) as session:
+            yield session
+
+    app.dependency_overrides[get_current_user] = _fake_current_user
+    app.dependency_overrides[get_tenant_db] = _get_test_tenant_db
+    yield tenant_a
+    app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_tenant_db, None)
 
 
 @pytest_asyncio.fixture
