@@ -134,3 +134,9 @@ resource "local_file" "migration_network" {
     }
   })
 }
+
+module "bedrock" {
+  source = "../../modules/bedrock"
+
+  environment = "dev"
+}

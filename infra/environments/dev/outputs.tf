@@ -49,3 +49,11 @@ output "sqs_queue_url" {
 output "private_subnet_ids" {
   value = module.network.private_subnet_ids
 }
+
+output "bedrock_guardrail_id" {
+  value = module.bedrock.guardrail_id
+}
+
+output "bedrock_guardrail_version" {
+  value = module.bedrock.guardrail_version
+}
