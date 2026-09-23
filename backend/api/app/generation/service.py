@@ -26,10 +26,14 @@ class GenerationService:
         if result.stop_reason == "max_tokens":
             logger.warning("generation_truncated", output_tokens=result.output_tokens)
 
+        if result.guardrail_intervened:
+            logger.warning("guardrail_intervened")
+
         return AnswerResult(
             text=result.text,
             citations=[prompt.citation_map[i] for i in cited if i in prompt.citation_map],
             stop_reason=result.stop_reason,
             input_tokens=result.input_tokens,
             output_tokens=result.output_tokens,
+            guardrail_intervened=result.guardrail_intervened,
         )

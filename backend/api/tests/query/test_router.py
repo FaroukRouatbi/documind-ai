@@ -40,6 +40,7 @@ async def test_query_returns_answer_with_resolved_citation(
     assert citation["chunk_id"] == str(chunk.id)
     assert citation["filename"] == "a.md"
     assert citation["content"] == "Revenue grew 18%."
+    assert body["blocked"] is False
 
 
 async def test_query_with_no_matching_chunks_skips_generation(client, fake_generation):
@@ -124,3 +125,28 @@ async def test_query_rejects_invalid_input(client, fake_generation):
 
     assert empty.status_code == 422
     assert too_many.status_code == 422
+
+
+async def test_query_flags_blocked_answer_when_guardrail_intervenes(
+    client, fake_generation, seeded_tenants, seed_chunks
+):
+    await seed_chunks(
+        [
+            _chunk_for(
+                seeded_tenants["tenant_a"],
+                seeded_tenants["doc_a"],
+                "Revenue grew 18%.",
+                unit_vector(0),
+            )
+        ]
+    )
+
+    fake_generation.text = "This request was blocked by content policy"
+    fake_generation.guardrail_intervened = True
+
+    response = await client.post("/v1/query", json={"query": "revenue?"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["blocked"] is True
+    assert body["citations"] == []

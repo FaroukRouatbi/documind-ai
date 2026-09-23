@@ -24,6 +24,7 @@ class FakeGenerationClient:
     def __init__(self):
         self.text = "No answer set."
         self.stop_reason = "end_turn"
+        self.guardrail_intervened = False
         self.calls = 0
 
     async def generate(self, system: str, user_content: str) -> GenerationResult:
@@ -33,6 +34,7 @@ class FakeGenerationClient:
             stop_reason=self.stop_reason,
             input_tokens=100,
             output_tokens=50,
+            guardrail_intervened=self.guardrail_intervened,
         )
 
 

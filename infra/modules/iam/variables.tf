@@ -25,3 +25,19 @@ variable "aws_region" {
 variable "documents_kms_key_arn" {
   type = string
 }
+
+variable "bedrock_guardrail_arn" {
+  description = "ARN of the Bedrock guardrail applied to generation calls"
+  type        = string
+}
+
+variable "claude_inference_profile_id" {
+  description = "Bedrock inference profile ID used for answer generation"
+  type        = string
+  default     = "global.anthropic.claude-sonnet-4-6"
+}
+
+variable "claude_model_id" {
+  description = "Underlying foundation model ID behind the Claude inference profile"
+  type        = string
+}

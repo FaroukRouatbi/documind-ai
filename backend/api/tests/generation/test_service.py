@@ -18,6 +18,7 @@ class _FakeGenerationClient:
             stop_reason=self._stop_reason,
             input_tokens=100,
             output_tokens=50,
+            guardrail_intervened=False,
         )
 
 

@@ -23,6 +23,9 @@ module "iam" {
   sqs_queue_arn           = module.sqs.ingestion_queue_arn
   aws_region              = var.aws_region
   documents_kms_key_arn   = module.s3.documents_kms_key_arn
+
+  bedrock_guardrail_arn = module.bedrock.guardrail_arn
+  claude_model_id       = "anthropic.claude-sonnet-4-6"
 }
 
 module "rds" {
@@ -85,6 +88,8 @@ module "ecs" {
 
   api_image_tag    = var.api_image_tag
   worker_image_tag = var.worker_image_tag
+
+  bedrock_guardrail_arn = module.bedrock.guardrail_arn
 }
 
 resource "aws_sqs_queue_policy" "ingestion_allow_s3" {
@@ -133,4 +138,10 @@ resource "local_file" "migration_network" {
       assignPublicIp = "DISABLED"
     }
   })
+}
+
+module "bedrock" {
+  source = "../../modules/bedrock"
+
+  environment = "dev"
 }

@@ -8,6 +8,7 @@ class GenerationResult:
     stop_reason: str
     input_tokens: int
     output_tokens: int
+    guardrail_intervened: bool
 
 
 @dataclass(frozen=True)
@@ -24,3 +25,4 @@ class AnswerResult:
     stop_reason: str
     input_tokens: int
     output_tokens: int
+    guardrail_intervened: bool

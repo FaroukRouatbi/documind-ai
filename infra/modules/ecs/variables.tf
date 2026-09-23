@@ -77,3 +77,8 @@ variable "api_image_tag" {
 variable "worker_image_tag" {
   type = string
 }
+
+variable "bedrock_guardrail_arn" {
+  description = "ARN of the Bedrock guardrail applied to generation calls"
+  type        = string
+}
