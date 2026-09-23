@@ -20,6 +20,8 @@ class BedrockGenerationClient:
         region: str,
         model_id: str = "global.anthropic.claude-sonnet-4-6",
         max_tokens: int = 1024,
+        guardrail_arn: str | None = None,
+        guardrail_version: str = "DRAFT",
     ):
         self._client = boto3.client(
             "bedrock-runtime",
@@ -31,6 +33,8 @@ class BedrockGenerationClient:
         self._breaker = pybreaker.CircuitBreaker(
             fail_max=5, reset_timeout=30, exclude=[is_permanent]
         )
+        self._guardrail_arn = guardrail_arn
+        self._guardrail_version = guardrail_version
 
     async def generate(self, system: str, user_content: str) -> GenerationResult:
         return await asyncio.to_thread(self._generate_guarded, system, user_content)
@@ -47,11 +51,16 @@ class BedrockGenerationClient:
                 "messages": [{"role": "user", "content": user_content}],
             }
         )
-        response = self._client.invoke_model(modelId=self._model_id, body=body)
+        kwargs = {"modelId": self._model_id, "body": body}
+        if self._guardrail_arn:
+            kwargs["guardrailIdentifier"] = self._guardrail_arn
+            kwargs["guardrailVersion"] = self._guardrail_version
+        response = self._client.invoke_model(**kwargs)
         payload = json.loads(response["body"].read())
         return GenerationResult(
             text=payload["content"][0]["text"],
             stop_reason=payload["stop_reason"],
             input_tokens=payload["usage"]["input_tokens"],
             output_tokens=payload["usage"]["output_tokens"],
+            guardrail_intervened=payload.get("amazon-bedrock-guardrailAction") == "INTERVENED",
         )

@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     environment: str = "dev"
     migration_db_credentials: str | None = None
+    bedrock_guardrail_id: str | None = None
+    bedrock_guardrail_version: str = "DRAFT"
 
     model_config = SettingsConfigDict(
         env_file=".env",
