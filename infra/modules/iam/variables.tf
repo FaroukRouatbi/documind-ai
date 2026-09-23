@@ -41,3 +41,8 @@ variable "claude_model_id" {
   description = "Underlying foundation model ID behind the Claude inference profile"
   type        = string
 }
+
+variable "redis_auth_secret_arn" {
+  description = "ARN of the Secrets Manager secret holding the Redis AUTH token"
+  type        = string
+}

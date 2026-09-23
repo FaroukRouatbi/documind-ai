@@ -89,13 +89,15 @@ resource "aws_ecs_task_definition" "api" {
         { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
         { name = "COGNITO_USER_POOL_CLIENT_ID", value = var.cognito_user_pool_client_id },
         { name = "BEDROCK_GUARDRAIL_ARN", value = var.bedrock_guardrail_arn },
+        { name = "REDIS_URL", value = "rediss://${var.redis_endpoint}:6379" },
         { name = "ENVIRONMENT", value = "prod" }
       ]
 
       secrets = [
         { name = "DB_CREDENTIALS", valueFrom = var.db_secret_arn },
         { name = "MIGRATION_DB_CREDENTIALS", valueFrom = var.migration_db_secret_arn },
-        { name = "DOCUMIND_APP_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" }
+        { name = "DOCUMIND_APP_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" },
+        { name = "REDIS_AUTH_TOKEN", valueFrom = var.redis_auth_secret_arn },
       ]
 
       logConfiguration = {
