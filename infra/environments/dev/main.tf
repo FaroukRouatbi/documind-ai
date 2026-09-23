@@ -88,6 +88,8 @@ module "ecs" {
 
   api_image_tag    = var.api_image_tag
   worker_image_tag = var.worker_image_tag
+
+  bedrock_guardrail_arn = module.bedrock.guardrail_arn
 }
 
 resource "aws_sqs_queue_policy" "ingestion_allow_s3" {

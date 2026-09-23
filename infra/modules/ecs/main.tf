@@ -88,6 +88,7 @@ resource "aws_ecs_task_definition" "api" {
         { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
         { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
         { name = "COGNITO_USER_POOL_CLIENT_ID", value = var.cognito_user_pool_client_id },
+        { name = "BEDROCK_GUARDRAIL_ARN", value = var.bedrock_guardrail_arn },
         { name = "ENVIRONMENT", value = "prod" }
       ]
 

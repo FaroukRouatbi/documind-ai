@@ -2,7 +2,7 @@ resource "aws_bedrock_guardrail" "main" {
   name                      = "documind-ai-${var.environment}"
   description               = "Content and grounding safeguards for DocuMind RAG answers"
   blocked_input_messaging   = "This request was blocked by content policy"
-  blocked_outputs_messaging = "This rrequest was blocked by content policy"
+  blocked_outputs_messaging = "This request was blocked by content policy"
 
   content_policy_config {
     filters_config {
