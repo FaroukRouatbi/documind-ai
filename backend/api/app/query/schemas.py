@@ -21,3 +21,4 @@ class QueryResponse(BaseModel):
     answer: str
     citations: list[Citation]
     truncated: bool
+    blocked: bool

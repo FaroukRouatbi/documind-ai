@@ -35,6 +35,7 @@ async def query_documents(
             answer=NO_ANSWER_RESPONSE,
             citations=[],
             truncated=False,
+            blocked=False,
         )
 
     answer = await generation.generate_answer(request.query, chunks)
@@ -63,4 +64,5 @@ async def query_documents(
         answer=answer.text,
         citations=citations,
         truncated=answer.stop_reason == "max_tokens",
+        blocked=answer.guardrail_intervened,
     )
