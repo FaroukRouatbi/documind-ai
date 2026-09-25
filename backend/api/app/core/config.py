@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     bedrock_guardrail_version: str = "DRAFT"
     redis_url: str | None = None
     redis_auth_token: str | None = None
+    query_rate_limit_per_minute: int = 30
 
     model_config = SettingsConfigDict(
         env_file=".env",
