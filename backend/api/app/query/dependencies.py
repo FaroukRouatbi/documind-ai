@@ -19,7 +19,11 @@ def get_embedder() -> BedrockEmbeddingClient:
 
 @lru_cache
 def get_generation_client() -> BedrockGenerationClient:
-    return BedrockGenerationClient(settings.aws_region)
+    return BedrockGenerationClient(
+        settings.aws_region,
+        guardrail_arn=settings.bedrock_guardrail_arn,
+        guardrail_version=settings.bedrock_guardrail_version,
+    )
 
 
 def get_retrieval_service(
