@@ -1,6 +1,7 @@
 from functools import lru_cache
 
-from fastapi import Depends
+import redis
+from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.chunks.repository import ChunkRepository
@@ -34,3 +35,7 @@ def get_retrieval_service(
 
 def get_generation_service() -> GenerationService:
     return GenerationService(get_generation_client())
+
+
+def get_redis(request: Request) -> redis.Redis | None:
+    return request.app.state.redis
