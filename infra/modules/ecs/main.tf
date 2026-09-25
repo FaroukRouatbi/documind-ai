@@ -84,7 +84,6 @@ resource "aws_ecs_task_definition" "api" {
 
       environment = [
         { name = "DOCUMENTS_BUCKET_NAME", value = var.documents_bucket_name },
-        { name = "REDIS_ENDPOINT", value = var.redis_endpoint },
         { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
         { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
         { name = "COGNITO_USER_POOL_CLIENT_ID", value = var.cognito_user_pool_client_id },
@@ -147,7 +146,6 @@ resource "aws_ecs_task_definition" "worker" {
 
       environment = [
         { name = "DOCUMENTS_BUCKET_NAME", value = var.documents_bucket_name },
-        { name = "REDIS_ENDPOINT", value = var.redis_endpoint },
         { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
         # "Local" selects the stdout EMF sink; container stdout → awslogs → CloudWatch extracts metrics (no agent sidecar)
         { name = "AWS_EMF_ENVIRONMENT", value = "Local" },
