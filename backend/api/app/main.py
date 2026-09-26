@@ -1,11 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from app import models_registry  # noqa: F401
 from app.auth.router import router as auth_router
 from app.core.logging import configure_logging
 from app.core.middleware import CorrelationIdMiddleware, RequestSizeLimitMiddleware
+from app.core.redis import create_redis_client
 from app.documents.router import router as doc_router
 from app.query.router import router as query_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.redis = create_redis_client()
+    yield
+    if app.state.redis is not None:
+        await app.state.redis.aclose()
 
 
 def create_app() -> FastAPI:
@@ -20,6 +31,7 @@ def create_app() -> FastAPI:
             "via row-level security."
         ),
         version="1.0.0",
+        lifespan=lifespan,
     )
 
     app.add_middleware(CorrelationIdMiddleware)

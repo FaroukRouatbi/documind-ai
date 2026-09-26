@@ -8,14 +8,19 @@ from app.core.security import get_current_user
 from app.documents.repository import DocumentRepository
 from app.generation.prompts import NO_ANSWER_RESPONSE
 from app.generation.service import GenerationService
-from app.query.dependencies import get_generation_service, get_retrieval_service
+from app.query.dependencies import enforce_rate_limit, get_generation_service, get_retrieval_service
 from app.query.schemas import Citation, QueryRequest, QueryResponse
 from app.retrieval.service import RetrievalService
 
 router = APIRouter(prefix=API_V1_PREFIX, tags=["query"])
 
 
-@router.post("/query", response_model=QueryResponse, summary="Ask a question about your documents")
+@router.post(
+    "/query",
+    response_model=QueryResponse,
+    summary="Ask a question about your documents",
+    dependencies=[Depends(enforce_rate_limit)],
+)
 async def query_documents(
     request: QueryRequest,
     current_user: dict = Depends(get_current_user),

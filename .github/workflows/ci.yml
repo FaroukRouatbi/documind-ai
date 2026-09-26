@@ -24,13 +24,23 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: backend/api
 
     env:
       DOCUMENTS_BUCKET_NAME: ci-dummy-bucket
-      REDIS_ENDPOINT: ci-dummy-redis
+      REDIS_URL: redis://localhost:6379
       SQS_QUEUE_URL: ci-dummy-queue
       DB_CREDENTIALS: '{"username":"documind_app","password":"local_dev_app_pw_2026","host":"localhost","port":5432,"dbname":"documind"}'
       MIGRATION_DB_CREDENTIALS: '{"username":"documind","password":"localdev","host":"localhost","port":5432,"dbname":"documind"}'

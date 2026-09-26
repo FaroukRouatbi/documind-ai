@@ -26,6 +26,8 @@ module "iam" {
 
   bedrock_guardrail_arn = module.bedrock.guardrail_arn
   claude_model_id       = "anthropic.claude-sonnet-4-6"
+
+  redis_auth_secret_arn = module.elasticache.redis_auth_secret_arn
 }
 
 module "rds" {
@@ -81,7 +83,6 @@ module "ecs" {
   documents_bucket_name       = module.s3.documents_bucket_name
   db_secret_arn               = module.rds.db_secret_arn
   migration_db_secret_arn     = module.rds.migration_db_secret_arn
-  redis_endpoint              = module.elasticache.redis_endpoint
   sqs_queue_url               = module.sqs.queue_url
   cognito_user_pool_id        = module.cognito.user_pool_id
   cognito_user_pool_client_id = module.cognito.user_pool_client_id
@@ -90,6 +91,9 @@ module "ecs" {
   worker_image_tag = var.worker_image_tag
 
   bedrock_guardrail_arn = module.bedrock.guardrail_arn
+
+  redis_endpoint        = module.elasticache.redis_endpoint
+  redis_auth_secret_arn = module.elasticache.redis_auth_secret_arn
 }
 
 resource "aws_sqs_queue_policy" "ingestion_allow_s3" {

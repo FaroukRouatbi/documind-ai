@@ -82,3 +82,8 @@ variable "bedrock_guardrail_arn" {
   description = "ARN of the Bedrock guardrail applied to generation calls"
   type        = string
 }
+
+variable "redis_auth_secret_arn" {
+  description = "ARN of the Secrets Manager secret holding the Redis AUTH token"
+  type        = string
+}

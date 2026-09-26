@@ -84,18 +84,19 @@ resource "aws_ecs_task_definition" "api" {
 
       environment = [
         { name = "DOCUMENTS_BUCKET_NAME", value = var.documents_bucket_name },
-        { name = "REDIS_ENDPOINT", value = var.redis_endpoint },
         { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
         { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
         { name = "COGNITO_USER_POOL_CLIENT_ID", value = var.cognito_user_pool_client_id },
         { name = "BEDROCK_GUARDRAIL_ARN", value = var.bedrock_guardrail_arn },
+        { name = "REDIS_URL", value = "rediss://${var.redis_endpoint}:6379" },
         { name = "ENVIRONMENT", value = "prod" }
       ]
 
       secrets = [
         { name = "DB_CREDENTIALS", valueFrom = var.db_secret_arn },
         { name = "MIGRATION_DB_CREDENTIALS", valueFrom = var.migration_db_secret_arn },
-        { name = "DOCUMIND_APP_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" }
+        { name = "DOCUMIND_APP_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" },
+        { name = "REDIS_AUTH_TOKEN", valueFrom = var.redis_auth_secret_arn },
       ]
 
       logConfiguration = {
@@ -145,7 +146,6 @@ resource "aws_ecs_task_definition" "worker" {
 
       environment = [
         { name = "DOCUMENTS_BUCKET_NAME", value = var.documents_bucket_name },
-        { name = "REDIS_ENDPOINT", value = var.redis_endpoint },
         { name = "SQS_QUEUE_URL", value = var.sqs_queue_url },
         # "Local" selects the stdout EMF sink; container stdout → awslogs → CloudWatch extracts metrics (no agent sidecar)
         { name = "AWS_EMF_ENVIRONMENT", value = "Local" },
