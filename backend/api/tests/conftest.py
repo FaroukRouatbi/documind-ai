@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.chunks.models import Chunk
 from app.core.config import DBCredentials, settings
 from app.core.database import get_tenant_db
+from app.core.redis import create_redis_client
 from app.core.security import get_current_user
 from app.documents.models import Document
 from app.main import app
@@ -195,3 +196,11 @@ async def cleanup_chunks(owner_sessionmaker, seeded_tenants):
                 text("DELETE FROM chunks WHERE document_id = ANY(:docs)"),
                 {"docs": [seeded_tenants["doc_a"], seeded_tenants["doc_b"]]},
             )
+
+
+@pytest_asyncio.fixture
+async def redis_client():
+    client = create_redis_client()
+    assert client is not None, "REDIS_URL must be set for rate limit tests"
+    yield client
+    await client.aclose()
