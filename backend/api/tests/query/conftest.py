@@ -53,3 +53,10 @@ async def fake_generation(as_tenant_a):
     yield generation_client
     app.dependency_overrides.pop(get_retrieval_service, None)
     app.dependency_overrides.pop(get_generation_service, None)
+
+
+@pytest_asyncio.fixture
+async def app_with_redis(redis_client):
+    app.state.redis = redis_client
+    yield
+    app.state.redis = None

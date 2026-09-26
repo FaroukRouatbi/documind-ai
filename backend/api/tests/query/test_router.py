@@ -1,4 +1,5 @@
 from app.chunks.models import Chunk
+from app.core.config import settings
 from app.generation.prompts import NO_ANSWER_RESPONSE
 from tests.conftest import unit_vector
 
@@ -150,3 +151,18 @@ async def test_query_flags_blocked_answer_when_guardrail_intervenes(
     body = response.json()
     assert body["blocked"] is True
     assert body["citations"] == []
+
+
+async def test_query_returns_429_when_rate_limited(
+    client, fake_generation, app_with_redis, monkeypatch
+):
+    monkeypatch.setattr(settings, "query_rate_limit_per_minute", 2)
+
+    for _ in range(2):
+        allowed = await client.post("/v1/query", json={"query": "hi"})
+        assert allowed.status_code == 200
+
+    limited = await client.post("/v1/query", json={"query": "hi"})
+
+    assert limited.status_code == 429
+    assert limited.headers["Retry-After"] == "60"
