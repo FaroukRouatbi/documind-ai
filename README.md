@@ -28,13 +28,15 @@ the decisions log.
 
 ```mermaid
 flowchart LR
-    U[User] -->|presigned POST| S3[(S3<br/>KMS encrypted)]
-    API[FastAPI] -.->|issues presigned URL| U
+    U[User] -->|1. request upload URL| API[FastAPI]
+    API -->|2. create pending row| RDS[(PostgreSQL 17<br/>pgvector + RLS)]
+    API -->|3. presigned POST URL| U
+    U -->|4. upload| S3[(S3<br/>KMS encrypted)]
     S3 -->|ObjectCreated| SQS[SQS + DLQ]
     SQS --> WRK[Ingestion worker]
     WRK -->|download| S3
     WRK -->|embed chunks| TITAN[Titan Embeddings V2]
-    WRK -->|persist| RDS[(PostgreSQL 17<br/>pgvector + RLS)]
+    WRK -->|persist chunks| RDS
 ```
 
 ### Query — question to cited answer
@@ -42,13 +44,15 @@ flowchart LR
 ```mermaid
 flowchart LR
     U[User] -->|POST /v1/query| API[FastAPI]
-    API -->|rate limit| REDIS[(Redis)]
     API -->|embed question| TITAN[Titan Embeddings V2]
     API -->|tenant-scoped<br/>vector search| RDS[(PostgreSQL 17<br/>pgvector + RLS)]
-    API -->|generate| CLAUDE[Claude Sonnet 4.6]
-    CLAUDE -.->|screened by| GUARD[Bedrock Guardrails]
+    API -->|generate<br/>via Guardrails| CLAUDE[Claude Sonnet 4.6]
     API -->|answer + citations| U
 ```
+
+Requests are authenticated with a Cognito-issued JWT carrying a `tenant_id` claim,
+and the query endpoint is rate-limited per tenant via Redis. Both services run on
+ECS Fargate behind an Application Load Balancer.
 
 ## How it works
 
