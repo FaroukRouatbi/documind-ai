@@ -24,45 +24,30 @@ the decisions log.
 
 ## Architecture
 
+### Ingestion — upload to searchable chunks
+
 ```mermaid
-flowchart TB
-    U[User]
-
-    subgraph aws[AWS]
-        COG[Cognito<br/>JWT with tenant_id claim]
-        ALB[Application<br/>Load Balancer]
-
-        subgraph ecs[ECS Fargate]
-            API[FastAPI service]
-            WRK[Ingestion worker]
-        end
-
-        S3[(S3<br/>documents<br/>KMS encrypted)]
-        SQS[SQS<br/>+ DLQ]
-        RDS[(PostgreSQL 17<br/>pgvector + RLS)]
-        REDIS[(ElastiCache Redis<br/>TLS + AUTH)]
-
-        subgraph bedrock[Amazon Bedrock]
-            TITAN[Titan Embeddings V2]
-            CLAUDE[Claude Sonnet 4.6]
-            GUARD[Guardrails]
-        end
-    end
-
-    U -->|authenticate| COG
-    U -->|requests| ALB --> API
-
-    API -->|presigned POST| S3
-    S3 -->|ObjectCreated| SQS --> WRK
+flowchart LR
+    U[User] -->|presigned POST| S3[(S3<br/>KMS encrypted)]
+    API[FastAPI] -.->|issues presigned URL| U
+    S3 -->|ObjectCreated| SQS[SQS + DLQ]
+    SQS --> WRK[Ingestion worker]
     WRK -->|download| S3
-    WRK -->|embed chunks| TITAN
-    WRK -->|persist chunks| RDS
+    WRK -->|embed chunks| TITAN[Titan Embeddings V2]
+    WRK -->|persist| RDS[(PostgreSQL 17<br/>pgvector + RLS)]
+```
 
-    API -->|embed query| TITAN
-    API -->|vector search| RDS
-    API -->|generate| CLAUDE
-    CLAUDE -.->|filtered by| GUARD
-    API -->|rate limiting| REDIS
+### Query — question to cited answer
+
+```mermaid
+flowchart LR
+    U[User] -->|POST /v1/query| API[FastAPI]
+    API -->|rate limit| REDIS[(Redis)]
+    API -->|embed question| TITAN[Titan Embeddings V2]
+    API -->|tenant-scoped<br/>vector search| RDS[(PostgreSQL 17<br/>pgvector + RLS)]
+    API -->|generate| CLAUDE[Claude Sonnet 4.6]
+    CLAUDE -.->|screened by| GUARD[Bedrock Guardrails]
+    API -->|answer + citations| U
 ```
 
 ## How it works
