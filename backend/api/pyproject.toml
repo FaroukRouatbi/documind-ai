@@ -47,7 +47,7 @@ dependencies = [
     "pydantic-core==2.46.4",
     "pydantic-settings==2.14.2",
     "pygments==2.20.0",
-    "pyjwt==2.13.0",
+    "pyjwt>=2.15.0",
     "pysbd==0.3.4",
     "python-dateutil==2.9.0.post0",
     "python-dotenv==1.2.2",
@@ -65,7 +65,7 @@ dependencies = [
     "typing-extensions==4.16.0",
     "typing-inspection==0.4.4",
     "tzdata==2026.3",
-    "urllib3==2.7.0",
+    "urllib3>=2.8.0",
     "uvicorn==0.52.4",
     "yarl==1.24.5",
 ]
