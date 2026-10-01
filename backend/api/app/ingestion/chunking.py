@@ -94,6 +94,8 @@ def split_section(content: str, budget: int = 500) -> list[str]:
 def chunk_document(
     markdown: str, *, embedding_model: str, embedding_version: str, budget: int = 500
 ) -> list[ChunkData]:
+    markdown = markdown.replace("\r\n", "\n").replace("\r", "\n")
+
     sections = parse_into_sections(markdown)
     chunk_index = 0
     chunks = []
