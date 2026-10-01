@@ -93,6 +93,9 @@ dev = [
     "pytest-asyncio==1.4.0",
     "pytest-cov==7.0.0",
     "ruff==0.16.4",
+    # Not imported directly — constrains the version pre-commit resolves,
+    # which was pinned to a release with open security advisories.
+    "virtualenv>=21.7.13",
 ]
 
 [tool.ruff]
