@@ -9,16 +9,15 @@ security rather than application filtering, and every significant architectural
 choice is recorded in [`docs/decisions-log.md`](docs/decisions-log.md) alongside the
 alternatives that were rejected.
 
-**Status:** In active development — Sprint 9 of 24 complete (`v0.9.0`).
+**Status:** In active development — Sprint 10 of 24 complete (`v0.10.0`).
 
 Working today: text document upload, asynchronous ingestion with real embeddings,
-tenant-scoped semantic search, and grounded answers with citations — all through an
-authenticated API.
+tenant-scoped semantic search, grounded answers with citations, and a reproducible
+retrieval benchmark — all through an authenticated API.
 
-Not yet built: web frontend, image and voice ingestion, and measured retrieval
-quality (the benchmark harness is Sprint 10). Known gaps are recorded in the
-[limitations section](docs/decisions-log.md#known-limitations-and-open-questions) of
-the decisions log.
+Not yet built: web frontend, and image and voice ingestion. Known gaps are recorded
+in the [limitations section](docs/decisions-log.md#known-limitations-and-open-questions)
+of the decisions log.
 
 ---
 
@@ -96,6 +95,25 @@ whose value depends on the corpus. The benchmark comes first.
 
 **[ECS Fargate over Kubernetes](docs/decisions-log.md#1-ecs-fargate-over-kubernetes)**
 — two long-running services and a queue consumer don't justify a control plane.
+
+## Retrieval quality
+
+Retrieval is measured, not asserted. A benchmark harness runs 23 questions against a
+39-chunk corpus through the real ingestion, embedding and retrieval path with row-level
+security applied, and writes results stamped with the git SHA they ran against.
+
+| Metric | Baseline |
+|---|---|
+| MRR | 0.6181 |
+| recall@1 | 0.4762 |
+| recall@5 | 0.7143 |
+| recall@10 | 1.0000 |
+
+Recall@10 is perfect while recall@1 is below 0.5: retrieval finds the answer for every
+question but ranks it first less than half the time. That is an ordering problem, which
+is what reranking addresses — and it is why reranking is the next experiment rather than
+a guess made earlier. Methodology, caveats and the latency breakdown are in
+[`backend/api/benchmark/README.md`](backend/api/benchmark/README.md).
 
 ## Multi-tenancy
 
