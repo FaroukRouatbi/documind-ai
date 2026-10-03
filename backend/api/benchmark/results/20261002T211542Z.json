@@ -1,0 +1,1262 @@
+{
+  "timestamp": "20261002T211542Z",
+  "git_sha": "fe243ae",
+  "retrieve_k": 10,
+  "metrics": {
+    "questions": 21,
+    "mrr": 0.6181,
+    "recall@1": 0.4762,
+    "recall@3": 0.6667,
+    "recall@5": 0.7143,
+    "recall@10": 1.0,
+    "latency": {
+      "avg_ms": 378.7,
+      "p50_ms": 348.9,
+      "p95_ms": 424.8,
+      "embed_avg_ms": 320.7,
+      "search_avg_ms": 57.9
+    }
+  },
+  "answerable": [
+    {
+      "id": "rls-001",
+      "question": "Which roles bypass row-level security?",
+      "expected_heading": "Row Security Policies > Who bypasses row security",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Referential integrity and row security",
+          "preview": "Referential integrity checks, such as unique or primary key constraints and fore"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        }
+      ],
+      "timings": {
+        "embed_ms": 1040.3,
+        "search_ms": 82.4,
+        "dedup_ms": 0.0,
+        "total_ms": 1122.7
+      }
+    },
+    {
+      "id": "rls-002",
+      "question": "What happens if a table has row security enabled but no policies defined?",
+      "expected_heading": "Row Security Policies > Enabling row security",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        }
+      ],
+      "timings": {
+        "embed_ms": 292.7,
+        "search_ms": 52.5,
+        "dedup_ms": 0.0,
+        "total_ms": 345.2
+      }
+    },
+    {
+      "id": "rls-003",
+      "question": "Can a table owner make themselves subject to their own row security policies?",
+      "expected_heading": "Row Security Policies > Who bypasses row security",
+      "rank": 6,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        }
+      ],
+      "timings": {
+        "embed_ms": 295.1,
+        "search_ms": 53.8,
+        "dedup_ms": 0.0,
+        "total_ms": 348.9
+      }
+    },
+    {
+      "id": "rls-004",
+      "question": "How are multiple policies on the same table combined?",
+      "expected_heading": "Row Security Policies > Creating and managing policies",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Permissive and restrictive policies",
+          "preview": "All of the policies constructed thus far have been permissive policies, meaning "
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        }
+      ],
+      "timings": {
+        "embed_ms": 330.2,
+        "search_ms": 50.9,
+        "dedup_ms": 0.0,
+        "total_ms": 381.1
+      }
+    },
+    {
+      "id": "rls-005",
+      "question": "Do foreign key checks respect row security?",
+      "expected_heading": "Row Security Policies > Referential integrity and row security",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Referential integrity and row security",
+          "preview": "Referential integrity checks, such as unique or primary key constraints and fore"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        }
+      ],
+      "timings": {
+        "embed_ms": 291.7,
+        "search_ms": 65.7,
+        "dedup_ms": 0.0,
+        "total_ms": 357.5
+      }
+    },
+    {
+      "id": "rls-006",
+      "question": "I need to take a backup and want to be certain no rows are silently hidden. What can I do?",
+      "expected_heading": "Row Security Policies > Disabling row security for backups",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Referential integrity and row security",
+          "preview": "Referential integrity checks, such as unique or primary key constraints and fore"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        }
+      ],
+      "timings": {
+        "embed_ms": 320.7,
+        "search_ms": 52.4,
+        "dedup_ms": 0.0,
+        "total_ms": 373.1
+      }
+    },
+    {
+      "id": "rls-007",
+      "question": "If I turn off row security on a table, are the policies deleted?",
+      "expected_heading": "Row Security Policies > Basic examples",
+      "rank": 7,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        }
+      ],
+      "timings": {
+        "embed_ms": 281.7,
+        "search_ms": 59.9,
+        "dedup_ms": 0.0,
+        "total_ms": 341.6
+      }
+    },
+    {
+      "id": "priv-001",
+      "question": "Who owns a newly created table?",
+      "expected_heading": "Privileges > Object ownership",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Privileges > Object ownership",
+          "preview": "When an object is created, it is assigned an owner. The owner is normally the ro"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Privileges > Reading aclitem entries",
+          "preview": "The privileges that have been granted for a particular object are displayed as a"
+        }
+      ],
+      "timings": {
+        "embed_ms": 303.4,
+        "search_ms": 53.1,
+        "dedup_ms": 0.0,
+        "total_ms": 356.6
+      }
+    },
+    {
+      "id": "priv-002",
+      "question": "Can I revoke someone's right to drop a table they own?",
+      "expected_heading": "Privileges > Object ownership",
+      "rank": 2,
+      "retrieved": [
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Privileges > Object ownership",
+          "preview": "When an object is created, it is assigned an owner. The owner is normally the ro"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "MAINTAIN\nAllows VACUUM, ANALYZE, CLUSTER, REFRESH MATERIALIZED VIEW, REINDEX, an"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        }
+      ],
+      "timings": {
+        "embed_ms": 292.4,
+        "search_ms": 57.9,
+        "dedup_ms": 0.0,
+        "total_ms": 350.4
+      }
+    },
+    {
+      "id": "priv-003",
+      "question": "Which commands does the MAINTAIN privilege allow?",
+      "expected_heading": "Privileges > The available privileges",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "MAINTAIN\nAllows VACUUM, ANALYZE, CLUSTER, REFRESH MATERIALIZED VIEW, REINDEX, an"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        },
+        {
+          "heading": "Privileges > ACL privilege abbreviations",
+          "preview": "Table 5.1 shows the one-letter abbreviations that are used for these privilege t"
+        },
+        {
+          "heading": "Privileges > Object ownership",
+          "preview": "When an object is created, it is assigned an owner. The owner is normally the ro"
+        },
+        {
+          "heading": "Privileges > Summary of access privileges by object type",
+          "preview": "Table 5.2 summarizes the privileges available for each type of SQL object, using"
+        },
+        {
+          "heading": "Privileges > Reading aclitem entries",
+          "preview": "The privileges that have been granted for a particular object are displayed as a"
+        },
+        {
+          "heading": "Privileges > Default privileges granted to PUBLIC",
+          "preview": "PostgreSQL grants privileges on some types of objects to PUBLIC by default when "
+        },
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        }
+      ],
+      "timings": {
+        "embed_ms": 252.8,
+        "search_ms": 52.9,
+        "dedup_ms": 0.0,
+        "total_ms": 305.7
+      }
+    },
+    {
+      "id": "priv-004",
+      "question": "Why is granting REFERENCES on a table risky?",
+      "expected_heading": "Privileges > The available privileges",
+      "rank": 6,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Referential integrity and row security",
+          "preview": "Referential integrity checks, such as unique or primary key constraints and fore"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        }
+      ],
+      "timings": {
+        "embed_ms": 370.1,
+        "search_ms": 54.8,
+        "dedup_ms": 0.0,
+        "total_ms": 424.8
+      }
+    },
+    {
+      "id": "priv-005",
+      "question": "Which object types does USAGE apply to?",
+      "expected_heading": "Privileges > ACL privilege abbreviations",
+      "rank": 3,
+      "retrieved": [
+        {
+          "heading": "Privileges > Summary of access privileges by object type",
+          "preview": "Table 5.2 summarizes the privileges available for each type of SQL object, using"
+        },
+        {
+          "heading": "Privileges > Object ownership",
+          "preview": "When an object is created, it is assigned an owner. The owner is normally the ro"
+        },
+        {
+          "heading": "Privileges > ACL privilege abbreviations",
+          "preview": "Table 5.1 shows the one-letter abbreviations that are used for these privilege t"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "MAINTAIN\nAllows VACUUM, ANALYZE, CLUSTER, REFRESH MATERIALIZED VIEW, REINDEX, an"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Transaction Isolation",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/transaction-iso.html (captured 2"
+        }
+      ],
+      "timings": {
+        "embed_ms": 277.4,
+        "search_ms": 60.1,
+        "dedup_ms": 0.0,
+        "total_ms": 337.5
+      }
+    },
+    {
+      "id": "priv-006",
+      "question": "Does everyone get read access to a new table by default?",
+      "expected_heading": "Privileges > Default privileges granted to PUBLIC",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Privileges > Default privileges granted to PUBLIC",
+          "preview": "PostgreSQL grants privileges on some types of objects to PUBLIC by default when "
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "    -- Allow admin all normal rights\n    GRANT SELECT, INSERT, UPDATE, DELETE ON"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "If two such transactions concurrently try to change the balance of account 12345"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        }
+      ],
+      "timings": {
+        "embed_ms": 268.6,
+        "search_ms": 63.4,
+        "dedup_ms": 0.0,
+        "total_ms": 332.0
+      }
+    },
+    {
+      "id": "priv-007",
+      "question": "In a privilege listing, what does it mean when the part before the equals sign is empty?",
+      "expected_heading": "Privileges > Reading aclitem entries",
+      "rank": 2,
+      "retrieved": [
+        {
+          "heading": "Privileges > Reading aclitem entries",
+          "preview": "If the \u201cAccess privileges\u201d column is empty for a given object, it means the obje"
+        },
+        {
+          "heading": "Privileges > Reading aclitem entries",
+          "preview": "The privileges that have been granted for a particular object are displayed as a"
+        },
+        {
+          "heading": "Privileges > ACL privilege abbreviations",
+          "preview": "Table 5.1 shows the one-letter abbreviations that are used for these privilege t"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "The available privileges are:\n\nSELECT\nAllows SELECT from any column, or specific"
+        },
+        {
+          "heading": "Privileges > Summary of access privileges by object type",
+          "preview": "Table 5.2 summarizes the privileges available for each type of SQL object, using"
+        },
+        {
+          "heading": "Privileges > Granting and revoking privileges",
+          "preview": "To assign privileges, the GRANT command is used. For example, if joe is an exist"
+        },
+        {
+          "heading": "Privileges",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-priv.html (captured 2026-09-"
+        },
+        {
+          "heading": "Privileges > Object ownership",
+          "preview": "When an object is created, it is assigned an owner. The owner is normally the ro"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "MAINTAIN\nAllows VACUUM, ANALYZE, CLUSTER, REFRESH MATERIALIZED VIEW, REINDEX, an"
+        }
+      ],
+      "timings": {
+        "embed_ms": 216.5,
+        "search_ms": 49.8,
+        "dedup_ms": 0.0,
+        "total_ms": 266.3
+      }
+    },
+    {
+      "id": "iso-001",
+      "question": "Which isolation level does PostgreSQL use if I don't specify one?",
+      "expected_heading": "Transaction Isolation > Read Committed Isolation Level",
+      "rank": 2,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "Read Committed is the default isolation level in PostgreSQL. When a transaction "
+        },
+        {
+          "heading": "Privileges > Default privileges granted to PUBLIC",
+          "preview": "PostgreSQL grants privileges on some types of objects to PUBLIC by default when "
+        },
+        {
+          "heading": "Privileges",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-priv.html (captured 2026-09-"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels and concurrency phenomena",
+          "preview": "The SQL standard defines four levels of transaction isolation. The most strict i"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level is implemented using a technique known in acade"
+        }
+      ],
+      "timings": {
+        "embed_ms": 275.4,
+        "search_ms": 64.7,
+        "dedup_ms": 0.0,
+        "total_ms": 340.2
+      }
+    },
+    {
+      "id": "iso-002",
+      "question": "Can I see uncommitted changes made by another session?",
+      "expected_heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+      "rank": 4,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "If two such transactions concurrently try to change the balance of account 12345"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "The Repeatable Read isolation level only sees data committed before the transact"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "Read Committed is the default isolation level in PostgreSQL. When a transaction "
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels and concurrency phenomena",
+          "preview": "The SQL standard defines four levels of transaction isolation. The most strict i"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level provides the strictest transaction isolation. T"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        }
+      ],
+      "timings": {
+        "embed_ms": 275.2,
+        "search_ms": 51.5,
+        "dedup_ms": 0.0,
+        "total_ms": 326.7
+      }
+    },
+    {
+      "id": "iso-003",
+      "question": "If my transaction rolls back, does the sequence counter go back too?",
+      "expected_heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+      "rank": 9,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level provides the strictest transaction isolation. T"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "The Repeatable Read isolation level only sees data committed before the transact"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels and concurrency phenomena",
+          "preview": "The SQL standard defines four levels of transaction isolation. The most strict i"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Transaction Isolation",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/transaction-iso.html (captured 2"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        }
+      ],
+      "timings": {
+        "embed_ms": 283.5,
+        "search_ms": 53.4,
+        "dedup_ms": 0.0,
+        "total_ms": 336.8
+      }
+    },
+    {
+      "id": "iso-004",
+      "question": "Do read-only transactions ever need to be retried?",
+      "expected_heading": "Transaction Isolation > Repeatable Read Isolation Level",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "The Repeatable Read isolation level only sees data committed before the transact"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "If two such transactions concurrently try to change the balance of account 12345"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level provides the strictest transaction isolation. T"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels and concurrency phenomena",
+          "preview": "The SQL standard defines four levels of transaction isolation. The most strict i"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "Read Committed is the default isolation level in PostgreSQL. When a transaction "
+        }
+      ],
+      "timings": {
+        "embed_ms": 281.0,
+        "search_ms": 60.9,
+        "dedup_ms": 0.0,
+        "total_ms": 342.0
+      }
+    },
+    {
+      "id": "iso-005",
+      "question": "What error code should my application catch to detect serialization failures?",
+      "expected_heading": "Transaction Isolation > Serializable Isolation Level",
+      "rank": 6,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level provides the strictest transaction isolation. T"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level is implemented using a technique known in acade"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels and concurrency phenomena",
+          "preview": "The SQL standard defines four levels of transaction isolation. The most strict i"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "The Repeatable Read isolation level only sees data committed before the transact"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Row Security Policies > Disabling row security for backups",
+          "preview": "In some contexts it is important to be sure that row security is not being appli"
+        },
+        {
+          "heading": "Privileges",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-priv.html (captured 2026-09-"
+        }
+      ],
+      "timings": {
+        "embed_ms": 311.6,
+        "search_ms": 56.8,
+        "dedup_ms": 0.0,
+        "total_ms": 368.4
+      }
+    },
+    {
+      "id": "iso-006",
+      "question": "What lock mode do predicate locks show up as?",
+      "expected_heading": "Transaction Isolation > Serializable Isolation Level",
+      "rank": 1,
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Transaction Isolation > Read Committed Isolation Level",
+          "preview": "If two such transactions concurrently try to change the balance of account 12345"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "MAINTAIN\nAllows VACUUM, ANALYZE, CLUSTER, REFRESH MATERIALIZED VIEW, REINDEX, an"
+        },
+        {
+          "heading": "Privileges > ACL privilege abbreviations",
+          "preview": "Table 5.1 shows the one-letter abbreviations that are used for these privilege t"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        }
+      ],
+      "timings": {
+        "embed_ms": 216.5,
+        "search_ms": 56.1,
+        "dedup_ms": 0.0,
+        "total_ms": 272.6
+      }
+    },
+    {
+      "id": "cross-001",
+      "question": "Who is allowed to add a security policy to a table?",
+      "expected_heading": "Row Security Policies > Who bypasses row security",
+      "rank": 7,
+      "retrieved": [
+        {
+          "heading": "Row Security Policies > Creating and managing policies",
+          "preview": "Policies are created using the CREATE POLICY command, altered using the ALTER PO"
+        },
+        {
+          "heading": "Row Security Policies > Basic examples",
+          "preview": "As a simple example, here is how to create a policy on the account relation to a"
+        },
+        {
+          "heading": "Row Security Policies > Enabling row security",
+          "preview": "When row security is enabled on a table (with ALTER TABLE ... ENABLE ROW LEVEL S"
+        },
+        {
+          "heading": "Row Security Policies > Overview",
+          "preview": "In addition to the SQL-standard privilege system available through GRANT, tables"
+        },
+        {
+          "heading": "Row Security Policies > How policies are evaluated",
+          "preview": "Row security policies can be specific to commands, or to roles, or to both. A po"
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "In the examples above, the policy expressions consider only the current values i"
+        },
+        {
+          "heading": "Row Security Policies > Who bypasses row security",
+          "preview": "Superusers and roles with the BYPASSRLS attribute always bypass the row security"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        },
+        {
+          "heading": "Row Security Policies > Permissive and restrictive policies",
+          "preview": "All of the policies constructed thus far have been permissive policies, meaning "
+        },
+        {
+          "heading": "Row Security Policies > Sub-SELECTs in policies and race conditions",
+          "preview": "```sql\n    BEGIN;\n    UPDATE users SET group_id = 1 WHERE user_name = 'mallory';"
+        }
+      ],
+      "timings": {
+        "embed_ms": 298.3,
+        "search_ms": 61.8,
+        "dedup_ms": 0.0,
+        "total_ms": 360.1
+      }
+    }
+  ],
+  "unanswerable": [
+    {
+      "id": "unans-001",
+      "question": "What port does PostgreSQL listen on by default?",
+      "retrieved": [
+        {
+          "heading": "Privileges > Default privileges granted to PUBLIC",
+          "preview": "PostgreSQL grants privileges on some types of objects to PUBLIC by default when "
+        },
+        {
+          "heading": "Row Security Policies",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-rowsecurity.html (captured 2"
+        },
+        {
+          "heading": "Privileges",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-priv.html (captured 2026-09-"
+        },
+        {
+          "heading": "Transaction Isolation",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/transaction-iso.html (captured 2"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "    -- Allow admin all normal rights\n    GRANT SELECT, INSERT, UPDATE, DELETE ON"
+        },
+        {
+          "heading": "Privileges > The available privileges",
+          "preview": "For tablespaces, allows tables, indexes, and temporary files to be created withi"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "Predicate locks in PostgreSQL, like in most other database systems, are based on"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Row Security Policies > Permissive and restrictive policies",
+          "preview": "All of the policies constructed thus far have been permissive policies, meaning "
+        }
+      ],
+      "timings": {
+        "embed_ms": 298.9,
+        "search_ms": 60.7,
+        "dedup_ms": 0.0,
+        "total_ms": 359.5
+      }
+    },
+    {
+      "id": "unans-002",
+      "question": "How do I configure streaming replication to a standby server?",
+      "retrieved": [
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "Note that only updating transactions might need to be retried; read-only transac"
+        },
+        {
+          "heading": "Transaction Isolation > Repeatable Read Isolation Level",
+          "preview": "The Repeatable Read isolation level only sees data committed before the transact"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level provides the strictest transaction isolation. T"
+        },
+        {
+          "heading": "Row Security Policies > A worked example: the passwd table",
+          "preview": "Below is a larger example of how this feature can be used in production environm"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "The Serializable isolation level is implemented using a technique known in acade"
+        },
+        {
+          "heading": "Privileges",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-priv.html (captured 2026-09-"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "While PostgreSQL's Serializable transaction isolation level only allows concurre"
+        },
+        {
+          "heading": "Transaction Isolation > Serializable Isolation Level",
+          "preview": "When relying on Serializable transactions to prevent anomalies, it is important "
+        },
+        {
+          "heading": "Row Security Policies",
+          "preview": "<!-- Source: https://www.postgresql.org/docs/17/ddl-rowsecurity.html (captured 2"
+        },
+        {
+          "heading": "Transaction Isolation > Isolation levels in PostgreSQL",
+          "preview": "The SQL standard and PostgreSQL-implemented transaction isolation levels are des"
+        }
+      ],
+      "timings": {
+        "embed_ms": 303.0,
+        "search_ms": 56.9,
+        "dedup_ms": 0.0,
+        "total_ms": 360.0
+      }
+    }
+  ]
+}

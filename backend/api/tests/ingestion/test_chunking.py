@@ -96,3 +96,14 @@ def test_plain_text_no_headings_produces_chunk_with_no_path():
     assert len(chunks) == 1
     assert chunks[0].heading_path is None
     assert chunks[0].content == "Just some text with no headings."
+
+
+def test_crlf_and_lf_produce_identical_chunks():
+    lf = "# Title\n\nFirst paragraph.\n\n## Section\n\nSecond paragraph.\n"
+    crlf = lf.replace("\n", "\r\n")
+
+    lf_chunks = chunk_document(lf, embedding_model="test", embedding_version="v1")
+    crlf_chunks = chunk_document(crlf, embedding_model="test", embedding_version="v1")
+
+    assert [c.content for c in lf_chunks] == [c.content for c in crlf_chunks]
+    assert [c.heading_path for c in lf_chunks] == [c.heading_path for c in crlf_chunks]
