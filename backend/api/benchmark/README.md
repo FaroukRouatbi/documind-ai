@@ -79,7 +79,8 @@ quality on customer data.
 
 ## The questions
 
-`questions.jsonl`, 23 questions — 21 answerable, 2 unanswerable.
+`questions.jsonl`, 23 questions — 21 answerable, 2 unanswerable. One record, to show
+the format:
 
 ```json
 {"id": "rls-001",
@@ -250,14 +251,14 @@ machine, never to predict production latency.
 
 Each is a bet whose value depends on the corpus, which is why the harness came first.
 
-| Configuration | MRR | recall@1 | recall@5 | recall@10 |
-|---|---|---|---|---|
-| Dense baseline (Titan V2, k=10) | 0.6181 | 0.4762 | 0.7143 | 1.0000 |
-| + deferred embedding column | — | — | — | — |
-| + reranking | — | — | — | — |
-| + hybrid BM25 | — | — | — | — |
-| + chunk overlap | — | — | — | — |
-| + query rewriting | — | — | — | — |
+| Configuration | MRR | recall@1 | recall@5 | recall@10 | search ms |
+|---|---|---|---|---|---|
+| Dense baseline (Titan V2, k=10) | 0.6181 | 0.4762 | 0.7143 | 1.0000 | 57.9 |
+| + deferred embedding column | — | — | — | — | — |
+| + reranking | — | — | — | — | — |
+| + hybrid BM25 | — | — | — | — | — |
+| + chunk overlap | — | — | — | — | — |
+| + query rewriting | — | — | — | — | — |
 
 Given a baseline with perfect recall@10 and recall@1 below 0.5, reranking is the
 best-motivated first experiment: the material is already being retrieved, so the problem
