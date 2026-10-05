@@ -9,15 +9,18 @@ security rather than application filtering, and every significant architectural
 choice is recorded in [`docs/decisions-log.md`](docs/decisions-log.md) alongside the
 alternatives that were rejected.
 
-**Status:** In active development — Sprint 10 of 24 complete (`v0.10.0`).
+**Status:** In active development — Sprint 10 of 26 complete (`v0.10.0`).
 
 Working today: text document upload, asynchronous ingestion with real embeddings,
 tenant-scoped semantic search, grounded answers with citations, and a reproducible
 retrieval benchmark — all through an authenticated API.
 
-Not yet built: web frontend, and image and voice ingestion. Known gaps are recorded
-in the [limitations section](docs/decisions-log.md#known-limitations-and-open-questions)
-of the decisions log.
+Not yet built: PDF ingestion, multi-turn conversation, streaming responses, and a web
+frontend. Image and voice ingestion are
+[deliberately out of scope](docs/decisions-log.md#28-scope-narrowed-to-text-only-multimodal-ingestion-deferred).
+Known gaps are recorded in the
+[limitations section](docs/decisions-log.md#known-limitations-and-open-questions) of the
+decisions log.
 
 ---
 
@@ -91,7 +94,8 @@ because blocklists lose. No layer is claimed to make injection impossible.
 
 **[Retrieval techniques are deliberately not implemented yet](docs/decisions-log.md#18-measure-before-tuning)**
 — reranking, hybrid search, chunk overlap and parent/child retrieval are all bets
-whose value depends on the corpus. The benchmark comes first.
+whose value depends on the corpus. The benchmark came first; each one is now measured
+against it.
 
 **[ECS Fargate over Kubernetes](docs/decisions-log.md#1-ecs-fargate-over-kubernetes)**
 — two long-running services and a queue consumer don't justify a control plane.
@@ -160,12 +164,22 @@ documentation is served at `/docs`.
 
 ## Roadmap
 
-| Phase | Sprints | Focus |
-|---|---|---|
-| 1 | 0–12 | Text RAG with measured retrieval quality |
-| 2 | 13–17 | Multimodal — two image strategies compared, then voice |
-| 3 | 18–21 | Frontend, continuous deployment, autoscaling, observability |
-| 4 | 22–24 | Cost, security review, documentation |
+| Phase | Sprints | Focus | Status |
+|---|---|---|---|
+| 1 | 0–10 | Text RAG with measured retrieval quality | Complete (`v0.10.0`) |
+| 2 | 11–13 | PDF ingestion; retrieval quality measured and improved | |
+| 3 | 14–16 | Conversation and streaming; frontend and deployed demo; data lifecycle and audit | |
+| 4 | 17–18 | Generation evaluation; external benchmark arm and comparison report | |
+| 5 | 19–23 | Continuous deployment; autoscaling; backups and SLOs; OpenTelemetry; resilience drills | |
+| 6 | 24–26 | Cost control; security review; polish | |
+
+The full checklist is in [`docs/sprint-tracker.md`](docs/sprint-tracker.md).
+
+Multimodal ingestion — voice, and two competing image strategies — was in the original
+plan and has been
+[deliberately removed from scope](docs/decisions-log.md#28-scope-narrowed-to-text-only-multimodal-ingestion-deferred).
+The schema and the ingestion-strategy abstraction still accommodate it; the work is not
+scheduled.
 
 ## Licence
 
