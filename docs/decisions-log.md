@@ -52,6 +52,7 @@ replaced by a later entry.
 25. [Two-layer quality gate](#25-two-layer-quality-gate-pre-commit-and-ci)
 26. [Live-service tests pin the contract](#26-live-service-tests-pin-the-contract-never-the-content)
 27. [Every security test is verified to fail](#27-every-security-test-is-verified-to-fail)
+28. [Scope narrowed to text-only](#28-scope-narrowed-to-text-only-multimodal-ingestion-deferred)
 
 [Known limitations and open questions](#known-limitations-and-open-questions) ·
 [How this differs from production work](#how-this-differs-from-production-work)
@@ -615,7 +616,7 @@ wiring functions are structurally the least-tested code in the application.
 
 ## 21. Metrics via CloudWatch EMF rather than Prometheus
 
-**Sprint 6 · Status: Accepted, superseded in part by the Sprint 20 OpenTelemetry plan**
+**Sprint 6 · Status: Accepted, superseded in part by the Sprint 22 OpenTelemetry plan**
 
 **Context.** The ingestion worker is an ephemeral ECS task. Metrics need to reach
 somewhere queryable.
@@ -637,7 +638,7 @@ somewhere queryable.
   environment is torn down between sessions.
 
 **Consequences.** OpenTelemetry remains the intended instrumentation layer
-(Sprint 20), exporting to CloudWatch and/or Managed Prometheus. EMF is the interim
+(Sprint 22), exporting to CloudWatch and/or Managed Prometheus. EMF is the interim
 backend, not a reversal of that.
 
 ---
@@ -655,7 +656,7 @@ context variables. The presign endpoint persists it on the documents row. The wo
 binds it from that row at the start of processing. Every log line and metric in both
 services carries it, and it is returned to API consumers as `query_id`.
 
-**Alternatives rejected.** Full distributed tracing (X-Ray) — planned for Sprint 20,
+**Alternatives rejected.** Full distributed tracing (X-Ray) — planned for Sprint 22,
 but heavier than needed while the failure mode is "find every line about this
 document". The row is the natural carrier across the async gap, since the message
 itself is an S3-generated envelope you don't control.
@@ -794,46 +795,159 @@ can.
 
 ---
 
+## 28. Scope narrowed to text-only; multimodal ingestion deferred
+
+**Sprint 10 · Status: Accepted**
+
+**Context.** The project was planned as a multimodal platform: text, voice via
+Transcribe, and two competing image-ingestion strategies (vision-to-text versus
+multimodal embeddings) compared against each other in the benchmark. That comparison
+was the most novel element of the original plan. By the end of Sprint 10 the text path
+is complete end to end and retrieval quality is measured rather than asserted.
+
+The remaining multimodal work is roughly five sprints: voice (async Transcribe jobs,
+speaker diarization, word-level timestamps, confidence thresholds, speaker-turn
+chunking), image strategy A (vision-to-text, with separate prompting paths for
+document-like images and photographs), image strategy B (Titan multimodal embeddings, a
+second vector table at a different dimensionality, retrieval merged across two vector
+spaces), and an integration sprint for cross-modal queries.
+
+**Decision.** Scope to text-only. Image and voice ingestion are removed from the
+committed roadmap rather than left in it as indefinite future work.
+
+Every other production concern is retained: PDF ingestion, conversation and streaming,
+frontend and deployed demo, deletion and reindexing, audit logging, generation
+evaluation, continuous deployment, autoscaling, backups with a tested restore, SLOs,
+OpenTelemetry observability, resilience drills, cost control and a security review. The
+project is narrowed in input format, not reduced in engineering depth.
+
+**Alternatives rejected.**
+
+- *Build multimodal as planned.* It adds breadth to a project whose strength is depth,
+  and it would complicate the one thing currently clean and measurable: retrieval over
+  a single vector space with a benchmark attached. Merging results across two vector
+  spaces of different dimensionality is interesting, but layering it onto a retrieval
+  path whose quality problems are known and unfixed optimises breadth before depth.
+- *Drop the remaining production concerns and build multimodal instead.* This inverts
+  the project's differentiator. Measured retrieval quality, database-enforced tenant
+  isolation and operational hardening are harder to demonstrate and rarer than
+  additional input formats.
+- *Leave multimodal in the roadmap as "later".* A roadmap promising work that is not
+  coming is worse than a narrower accurate one. Carrying it as a vague commitment would
+  make the project read as drifting rather than scoped.
+
+**Consequences.** The `modality` and `ingestion_strategy` columns remain — they cost
+nothing and are the extension point if multimodal returns. The `IngestionStrategy` ABC
+(entry 13) stays, with PDF as the second implementation behind it, which finally
+validates the abstraction and triggers the factory deferred in entry 14. The
+benchmark's comparison axis becomes cross-*technique* rather than cross-*modality*, a
+narrower claim than originally planned, stated as such in the benchmark README. Entry
+18's forward pointer to "Sprint 11" for the retrieval levers now refers to Sprints
+12–13 under the revised plan; that entry is left unedited, since this log records
+reasoning at the time of the decision. The remaining plan is 26 sprints rather than 24
+— see the roadmap in the README and `docs/sprint-tracker.md`.
+
+---
+
 # Known limitations and open questions
 
 Things that are wrong, missing, or unvalidated — recorded deliberately rather than
-discovered by a reviewer.
+discovered by a reviewer. A sprint number means the gap is scheduled; entries without
+one are accepted tradeoffs. This list is expected to shrink.
 
-**Retrieval quality is unmeasured.** No benchmark exists, so the effectiveness of the
-chunking strategy and retrieval pipeline is unknown. This is the system's core value
-proposition and it is currently unvalidated. Sprint 10.
+**Text and Markdown are the only supported inputs.** The product is described as
+document Q&A; today it ingests Markdown. PDF is Sprint 11.
+
+**Retrieval ranks poorly even though it retrieves well.** The Sprint 10 benchmark
+records MRR 0.6181 with recall@1 at 0.4762 and recall@10 at 1.0000: the answer reaches
+the context window for every question, but is ranked first less than half the time. An
+ordering problem, addressed by reranking in Sprint 12. Absolute numbers are optimistic —
+the corpus is public documentation the embedding model has likely seen in training.
+
+**Vector search fetches embeddings nothing reads.** `ChunkRepository.search` selects the
+whole entity, so each query deserialises ten 1024-dimension vectors — about 53ms of a
+57ms search, against 0.5ms of actual Postgres execution. Fixed in Sprint 12; left in
+place deliberately so the Sprint 10 baseline stays comparable.
+
+**Ground truth is substring-based.** A benchmark hit is recorded when a retrieved chunk
+contains an expected substring, which is brittle in both directions. Stable gold chunk
+identifiers are Sprint 12.
+
+**Generation quality is unmeasured.** Retrieval has metrics; faithfulness, answer
+correctness, citation validity and abstention correctness do not. Sprint 17.
+
+**No conversation state.** Every query is single-shot. There are no conversation or
+message tables, no history in the prompt, and no coreference handling, so follow-up
+questions do not work. Sprint 14.
+
+**No streaming.** Generation takes seconds and the response is delivered whole, so the
+user waits with no feedback. Sprint 14.
+
+**No frontend.** The system is API-only; there is nothing to click. Sprint 15.
 
 **Data lifecycle is not implemented.** Deleting a document should cascade to its chunks
 and its S3 object; deleting a tenant should remove everything. Neither exists.
-Sprint 17.
+Sprint 16.
 
 **No reindexing process.** `embedding_version` is on every chunk precisely so the corpus
-can be re-embedded when the model changes — but nothing consumes it yet.
+can be re-embedded when the model changes — nothing consumes it yet. Sprint 16.
+
+**No audit log.** There is no record of who uploaded, queried or deleted what. Needed
+for compliance and incident response in a multi-tenant system. Sprint 16.
+
+**Every user in a tenant sees every document.** Isolation is enforced between tenants
+but not within one — no roles, no per-document access control. Sprint 25 decides whether
+to build it or declare it a non-goal.
+
+**Everything runs in `us-east-1`.** For European customer data that is a residency
+problem, and no retention or erasure policy is documented. Sprint 25.
 
 **Upload cap exceeds what the pipeline can process.** The API accepts documents up to
 50MB, which would produce tens of thousands of chunks, take minutes to embed, and
 exceed any reasonable SQS visibility timeout. Either the cap comes down or processing
-needs a `ChangeMessageVisibility` heartbeat.
+needs a `ChangeMessageVisibility` heartbeat. Sprint 24.
+
+**No per-tenant spend ceiling.** Rate limiting caps request volume, not Bedrock cost.
+Sprint 24.
 
 **Orphan cleanup is owed.** Entry 10's pattern leaves rows stuck in `pending` when an
 upload never completes. The S3 lifecycle rule and reconciliation sweep are not built.
+Sprint 16.
 
-**Backup and recovery are unconfigured.** The development environment runs with no
-backup retention, no deletion protection and `skip_final_snapshot` — deliberate cost
-trades that are wrong for production. No RPO or RTO target has been set.
+**Backup and recovery are unconfigured, and no restore has been attempted.** The
+development environment runs with no backup retention, no deletion protection and
+`skip_final_snapshot` — deliberate cost trades that are wrong for production. No RPO or
+RTO target is set. Sprint 21, which includes performing and timing a real restore,
+because an untested backup is a hope.
+
+**No SLOs.** Latency, availability and ingestion-success targets are undefined, so the
+alarms planned for Sprint 22 have nothing meaningful to burn against. Sprint 21.
+
+**Observability is metrics-only.** CloudWatch EMF covers counters and latencies; there
+is no distributed tracing, so a request cannot be followed across the async boundary
+visually. OpenTelemetry is Sprint 22.
+
+**Deployment is partly manual.** Migrations are run by hand before ECS updates, the ECS
+deployment circuit breaker is disabled, and there is no staging environment. Sprint 19.
 
 **Single points of failure in development.** One NAT gateway, single-AZ RDS, one cache
 node. Deliberate cost decisions, recorded as production gaps rather than oversights.
+Sprint 20.
+
+**The ALB serves plain HTTP.** No TLS certificate or HTTPS listener. Sprint 20.
 
 **No load testing.** Autoscaling thresholds, connection-pool sizing and the Bedrock
-quota ceiling are all untested under real concurrency.
+quota ceiling are all untested under real concurrency. Sprint 23.
 
 **Guardrail version is pinned to `DRAFT`.** A configuration change therefore takes
 effect on live traffic immediately, with no promotion step. Correct for development,
-wrong for production.
+wrong for production. Sprint 25.
 
 **Rate limiting fails open.** A Redis outage removes the protection. Accepted for
 availability at this threat model; revisit if the threat model changes.
+
+**Multimodal ingestion is out of scope.** Voice and image ingestion were planned and
+have been deliberately removed — entry 28.
 
 ---
 
@@ -844,7 +958,7 @@ the difference is worth naming.
 
 **There is no feedback loop.** A real team ships a thin slice, puts it in front of
 users, and lets what they learn reorder everything after it. This is built to a
-24-sprint plan with no users. That buys deliberate breadth — multi-tenancy,
+26-sprint plan with no users. That buys deliberate breadth — multi-tenancy,
 infrastructure as code, observability, a security review — that a year of feature work
 would never cover, at the cost of the prioritisation discipline real constraints
 impose.
