@@ -1,73 +1,44 @@
 [project]
 name = "documind-api"
-version = "0.7.0"
+version = "0.10.0"
 description = "DocuMind AI — production-grade RAG document Q&A platform"
 requires-python = ">=3.14,<3.15"
+# Direct dependencies only — things this codebase imports, or that are required at
+# runtime without being imported. Transitive dependencies are resolved by uv and
+# pinned in uv.lock, which is the file that makes builds reproducible. Listing
+# transitives here (as the original pip-freeze migration did) makes every
+# transitive advisory a manual edit and produces unsatisfiable sets for Dependabot.
 dependencies = [
-    "aiohappyeyeballs==2.7.1",
-    "aiohttp==3.14.3",
-    "aiosignal==1.4.0",
-    "alembic==1.18.5",
-    "annotated-doc==0.0.4",
-    "annotated-types==0.7.0",
-    "anyio==4.14.2",
-    "asyncpg==0.31.0",
-    "attrs==26.1.0",
-    "aws-embedded-metrics==3.5.0",
-    "boto3==1.43.56",
-    "botocore==1.43.82",
-    "certifi==2026.6.17",
-    "cffi==2.1.0",
-    "charset-normalizer==3.4.9",
-    "click==8.4.2",
-    "colorama==0.4.6",
+    "alembic>=1.18.5",
+    # Not imported: SQLAlchemy loads it from the postgresql+asyncpg:// URL.
+    "asyncpg>=0.31.0",
+    "aws-embedded-metrics>=3.5.0",
+    "boto3>=1.43.56",
+    "botocore>=1.43.82",
     "cryptography>=50.0.0",
-    "fastapi==0.139.2",
-    "frozenlist==1.8.0",
-    "greenlet==3.5.3",
-    "h11==0.16.0",
-    "httpcore==1.0.9",
-    "httpx==0.28.1",
-    "idna==3.18",
-    "jmespath==1.1.0",
-    "mako==1.4.1",
-    "markdown-it-py==4.2.0",
-    "markupsafe==3.0.3",
-    "mdurl==0.1.2",
-    "multidict==6.9.1",
-    "packaging==26.2",
-    "pgvector==0.5.0",
-    "propcache==0.5.2",
-    "psycopg==3.3.4",
-    "psycopg-binary==3.3.4",
-    "pyasn1==0.6.4",
-    "pybreaker==1.4.1",
-    "pycparser==3.0",
-    "pydantic==2.13.4",
-    "pydantic-core==2.46.4",
-    "pydantic-settings==2.14.2",
-    "pygments==2.20.0",
+    "fastapi>=0.139.2",
+    "httpx>=0.28.1",
+    "markdown-it-py>=4.2.0",
+    "pgvector>=0.5.0",
+    "pybreaker>=1.4.1",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.2",
     "pyjwt>=2.15.0",
-    "pysbd==0.3.4",
-    "python-dateutil==2.9.0.post0",
-    "python-dotenv==1.2.2",
+    "pysbd>=0.3.4",
+    # Not imported directly: pydantic-settings reads .env through it.
+    "python-dotenv>=1.2.2",
     "redis>=8.1.0",
-    "regex==2026.7.19",
-    "requests==2.34.2",
-    "rsa==4.9.1",
-    "s3transfer==0.19.2",
-    "six==1.17.0",
-    "sqlalchemy==2.0.51",
-    "starlette==1.6.0",
-    "structlog==26.1.0",
-    "tenacity==9.1.4",
-    "tiktoken==0.13.0",
-    "typing-extensions==4.16.0",
-    "typing-inspection==0.4.4",
-    "tzdata==2026.3",
+    # The asyncio extra pulls greenlet, which SQLAlchemy's async support requires
+    # at runtime without it ever being imported here.
+    "sqlalchemy[asyncio]>=2.0.51",
+    "starlette>=1.6.0",
+    "structlog>=26.1.0",
+    "tenacity>=9.1.4",
+    "tiktoken>=0.13.0",
+    # Not imported directly — constrains the version resolved transitively, which
+    # was previously pulled at a release with an open security advisory.
     "urllib3>=2.8.0",
-    "uvicorn==0.52.4",
-    "yarl==1.24.5",
+    "uvicorn>=0.52.4",
 ]
 
 [tool.pytest.ini_options]
@@ -89,6 +60,11 @@ markers = [
 dev = [
     "mypy==2.3.1",
     "pre-commit>=4.6.2",
+    # Used only by infra/scripts/sync_env.py, a local development tool. Kept out
+    # of [project.dependencies] deliberately: the application talks to Postgres
+    # through asyncpg, so this driver would otherwise ship in the API and worker
+    # images for nothing.
+    "psycopg[binary]>=3.3.4",
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "pytest-cov==7.0.0",
