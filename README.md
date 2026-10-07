@@ -15,7 +15,7 @@ Working today: text document upload, asynchronous ingestion with real embeddings
 tenant-scoped semantic search, grounded answers with citations, and a reproducible
 retrieval benchmark — all through an authenticated API.
 
-Not yet built: PDF ingestion, multi-turn conversation, streaming responses, and a web
+Not yet built: document formats beyond Markdown (PDF, Word, plain text), multi-turn conversation, streaming responses, and a web
 frontend. Image and voice ingestion are
 [deliberately out of scope](docs/decisions-log.md#28-scope-narrowed-to-text-only-multimodal-ingestion-deferred).
 Known gaps are recorded in the
@@ -167,7 +167,7 @@ documentation is served at `/docs`.
 | Phase | Sprints | Focus | Status |
 |---|---|---|---|
 | 1 | 0–10 | Text RAG with measured retrieval quality | Complete (`v0.10.0`) |
-| 2 | 11–13 | PDF ingestion; retrieval quality measured and improved | |
+| 2 | 11–13 | Document format ingestion (PDF, Word, text); retrieval quality measured and improved | |
 | 3 | 14–16 | Conversation and streaming; frontend and deployed demo; data lifecycle and audit | |
 | 4 | 17–18 | Generation evaluation; external benchmark arm and comparison report | |
 | 5 | 19–23 | Continuous deployment; autoscaling; backups and SLOs; OpenTelemetry; resilience drills | |

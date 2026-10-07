@@ -856,7 +856,7 @@ discovered by a reviewer. A sprint number means the gap is scheduled; entries wi
 one are accepted tradeoffs. This list is expected to shrink.
 
 **Text and Markdown are the only supported inputs.** The product is described as
-document Q&A; today it ingests Markdown. PDF is Sprint 11.
+document Q&A; today it ingests Markdown. PDF, Word and plain text are Sprint 11.
 
 **Retrieval ranks poorly even though it retrieves well.** The Sprint 10 benchmark
 records MRR 0.6181 with recall@1 at 0.4762 and recall@10 at 1.0000: the answer reaches

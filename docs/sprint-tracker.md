@@ -71,26 +71,49 @@ Baseline recorded: MRR 0.6181, recall@1 0.4762, recall@10 1.0000.
 
 ---
 
-## Sprint 11 — PDF ingestion
+## Sprint 11 — Document format ingestion
 
-The first input format beyond Markdown, and the one that validates the
-ingestion-strategy abstraction built in Sprint 6.
+The first inputs beyond Markdown. This is also the work that validates the
+ingestion-strategy abstraction from entry 13 and triggers the factory deliberately
+deferred in entry 14 — with real implementations to shape it rather than one imagined
+one.
 
-- [ ] **Extraction-path decision, documented:** Textract LAYOUT vs `pypdf` /
-      `pdfplumber` vs Bedrock multimodal. Weigh cost per page, extraction fidelity, and
-      whether the output carries structure the existing structure-aware chunker can use
-- [ ] `PdfIngestionStrategy` behind the existing protocol; dispatch on content type, not
-      file extension
-- [ ] Scanned vs digital PDFs handled as distinct cases (OCR needed or not), detected
-      rather than assumed
-- [ ] Page numbers carried into chunk metadata so citations can say *where*
-- [ ] **Chunk-quality checks (never built in Sprint 6):** reject suspiciously tiny or
-      huge chunks; strip binary and garbage from bad extraction rather than embedding it
-- [ ] **Format validation (never built in Sprint 6):** corrupt, empty and wrong-type
-      files get a clear `failed` status with a reason, not a crash
+**Architecture, done once:**
+
+- [ ] Content-type dispatch through a strategy factory (entry 14's deferred factory)
+- [ ] Every format converts to Markdown first and reuses the existing structure-aware
+      chunker (entry 12), rather than each format growing its own chunking
+- [ ] **Format validation:** corrupt, empty and wrong-type files get a clear `failed`
+      status with a reason, not a crash (owed from Sprint 6)
+- [ ] **Chunk-quality checks:** reject suspiciously tiny or huge chunks; strip binary
+      and garbage from bad extraction rather than embedding it (owed from Sprint 6)
 - [ ] Content-hash idempotency and DLQ handling to the same standard as text
-- [ ] A PDF arm in the benchmark corpus, so extraction quality is measured not assumed
-- [ ] Unit tests for the extraction and chunking branches
+- [ ] Source metadata rich enough to cite precisely: page number for PDF, section for
+      DOCX
+
+**Per format:**
+
+- [ ] **PDF** — extraction-path decision documented: Textract LAYOUT vs
+      `pypdf`/`pdfplumber` vs Bedrock multimodal. Weigh cost per page, extraction
+      fidelity, and whether the output carries structure the chunker can use. Scanned
+      versus digital PDFs detected rather than assumed
+- [ ] **DOCX** — `python-docx` gives headings, paragraphs, tables and lists as
+      structured objects, which map onto the Markdown intermediate representation more
+      cleanly than PDF does. The cheapest real win after PDF, and as expected as PDF for
+      business documents
+- [ ] **TXT** — treated as Markdown with no structure; the chunker's no-headings path
+      already exists and is tested
+- [ ] **HTML** *(stretch)* — `markdownify`; covers web and wiki exports
+
+**Measurement:**
+
+- [ ] A benchmark corpus arm per committed format, so extraction quality is measured
+      rather than assumed
+- [ ] Unit tests per extraction branch
+
+**Non-goals for this sprint:** `.pptx` and `.xlsx`. A slide deck has no prose flow and a
+spreadsheet is not prose; chunking either one well is a different problem, not a
+different parser.
 
 ## Sprint 12 — Retrieval quality: ranking and query
 
